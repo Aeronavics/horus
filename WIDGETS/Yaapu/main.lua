@@ -449,7 +449,7 @@ local conf = {
   rightPanel = 1,
   leftPanel = 1,
   widgetLayout = 1,
-  widgetLayoutFilename = "layout_1",
+  widgetLayoutFilename = "layout_aeronavics",
   centerPanelFilename = "hud_1",
   rightPanelFilename = "right_1",
   leftPanelFilename = "left_1",
@@ -2079,7 +2079,7 @@ local function backgroundTasks(myWidget,telemetryLoops)
       local fn = frameNames[telemetry.frameType]
       local strmodel = info.name
       if fn ~= nil then
-        status.modelString = fn..": "..info.name
+        status.modelString = "Aeronavics"
       end
     end
   end
@@ -2513,7 +2513,7 @@ local function drawFullScreen(myWidget)
       ------------------------------------
       lcd.clear(CUSTOM_COLOR)
       if layout ~= nil then
-        layout.draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,utils,customSensors,leftPanel,centerPanel,rightPanel)
+        layout.draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,utils,customSensors,centerPanel)
       else
         loadLayout();
       end
