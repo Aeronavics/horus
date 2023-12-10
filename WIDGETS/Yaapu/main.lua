@@ -1200,68 +1200,50 @@ local function calcBattery()
   --
   local count1,count2 = calcCellCount()
 
-  battery[1+1] = getMinVoltageBySource(status.battsource, status.cell1min, status.cell1sumFC/count1, 1)*100 --cel1m
-  battery[1+2] = getMinVoltageBySource(status.battsource, status.cell2min, status.cell2sumFC/count2, 2)*100 --cel2m
+  battery[2] = getMinVoltageBySource(status.battsource, status.cell1min, status.cell1sumFC/count1, 1)*100 --cel1m
+  battery[3] = getMinVoltageBySource(status.battsource, status.cell2min, status.cell2sumFC/count2, 2)*100 --cel2m
 
-  battery[4+1] = getMinVoltageBySource(status.battsource, status.cell1sum, status.cell1sumFC, 1)*10 --batt1
-  battery[4+2] = getMinVoltageBySource(status.battsource, status.cell2sum, status.cell2sumFC, 2)*10 --batt2
+  battery[5] = getMinVoltageBySource(status.battsource, status.cell1sum, status.cell1sumFC, 1)*10 --batt1
+  battery[6] = getMinVoltageBySource(status.battsource, status.cell2sum, status.cell2sumFC, 2)*10 --batt2
 
-  battery[7+1] = utils.getMaxValue(telemetry.batt1current,8) --curr1
-  battery[7+2] = utils.getMaxValue(telemetry.batt2current,9) --curr2
+  battery[8] = utils.getMaxValue(telemetry.batt1current,8) --curr1
+  battery[9] = utils.getMaxValue(telemetry.batt2current,9) --curr2
 
-  battery[10+1] = telemetry.batt1mah --mah1
-  battery[10+2] = telemetry.batt2mah --mah2
+  battery[11] = telemetry.batt1mah --mah1
+  battery[12] = telemetry.batt2mah --mah2
 
-  battery[13+1] = getBatt1Capacity() --cap1
-  battery[13+2] = getBatt2Capacity() --cap2
+  battery[14] = getBatt1Capacity() --cap1
+  battery[15] = getBatt2Capacity() --cap2
 
-  if (conf.battConf == 1) then
-    battery[1] = getNonZeroMin(battery[2], battery[3])
-    battery[4] = getNonZeroMin(battery[5],battery[6])
-    battery[7] = utils.getMaxValue(telemetry.batt1current + telemetry.batt2current, 7)
-    battery[10] = telemetry.batt1mah + telemetry.batt2mah
-    battery[13] = getBatt2Capacity() + getBatt1Capacity()
-  elseif (conf.battConf == 2) then
-    battery[1] = getNonZeroMin(battery[2], battery[3])
-    battery[4] = battery[5] + battery[6]
-    battery[7] = utils.getMaxValue(telemetry.batt1current,7)
-    battery[10] = telemetry.batt1mah
-    battery[13] = getBatt1Capacity()
-  elseif (conf.battConf == 3) then
-    -- independent batteries, alerts and capacity % on battery 1
-    battery[1] = battery[2]
-    battery[4] = battery[5]
-    battery[7] = utils.getMaxValue(telemetry.batt1current,7)
-    battery[10] = telemetry.batt1mah
-    battery[13] = getBatt1Capacity()
-  elseif (conf.battConf == 4) then
-    -- independent batteries, alerts and capacity % on battery 2
-    battery[1] = battery[3]
-    battery[4] = battery[6]
-    battery[7] = utils.getMaxValue(telemetry.batt2current,7)
-    battery[10] = telemetry.batt2mah
-    battery[13] = getBatt2Capacity()
-  elseif (conf.battConf == 5) then
-    -- independent batteries, voltage alerts on battery 1, capacity % on battery 2
-    battery[1] = battery[2]
-    battery[4] = battery[5]
-    battery[7] = utils.getMaxValue(telemetry.batt2current,7)
-    battery[10] = telemetry.batt2mah
-    battery[13] = getBatt2Capacity()
-  elseif (conf.battConf == 6) then
-    -- independent batteries, voltage alerts on battery 2, capacity % on battery 1
-    battery[1] = battery[3]
-    battery[4] = battery[6]
-    battery[7] = utils.getMaxValue(telemetry.batt1current,7)
-    battery[10] = telemetry.batt1mah
-    battery[13] = getBatt1Capacity()
-  elseif (conf.battConf == 7) then
-    battery[1] = battery[2]
-    battery[4] = battery[5]
-    battery[7] = utils.getMaxValue(telemetry.batt1current,7)
-    battery[10] = telemetry.batt1mah
-    battery[13] = getBatt1Capacity()
-  end
+  battery[1] = getNonZeroMin(battery[2], battery[3]) --min cell voltage
+  
+  battery[4] = getNonZeroMin(battery[5],battery[6]) --min batt voltage
+
+  battery[7] = telemetry.batt1current + telemetry.batt2current --total current draw
+  
+  battery[10] = telemetry.batt1mah + telemetry.batt2mah --combined efficiency
+
+  battery[13] = battery[14]+battery[15]
+
+  -- if (conf.battConf == 1) then
+  --   battery[1] = getNonZeroMin(battery[2], battery[3])
+  --   battery[4] = getNonZeroMin(battery[5],battery[6])
+  --   battery[7] = utils.getMaxValue(telemetry.batt1current, 7)
+  --   battery[10] = telemetry.batt1mah + telemetry.batt2mah
+  --   battery[13] = getBatt2Capacity() + getBatt1Capacity()
+  -- elseif (conf.battConf == 2) then
+  --   battery[1] = getNonZeroMin(battery[2], battery[3])
+  --   battery[4] = getNonZeroMin(battery[5],battery[6])
+  --   battery[7] = utils.getMaxValue(telemetry.batt1current + telemetry.batt2current, 7)
+  --   battery[10] = telemetry.batt1mah + telemetry.batt2mah
+  --   battery[13] = getBatt2Capacity() + getBatt1Capacity()
+  -- elseif (conf.battConf == 3) then
+  --   battery[1] = battery[2]
+  --   battery[4] = battery[5]
+  --   battery[7] = utils.getMaxValue(telemetry.batt1current,7)
+  --   battery[10] = telemetry.batt1mah
+  --   battery[13] = getBatt1Capacity()
+  -- end
 
   --[[
     discharge curve is based on battery under load, when motors are disarmed

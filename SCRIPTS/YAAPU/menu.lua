@@ -69,7 +69,7 @@ local menuItems = {
   {"batt[2] capacity override:", "B2", 0, 0,5000,"Ah",PREC2,10 },
   {"batt[1] cell count override:", "CC", 0, 0,12," cells",0,1 },
   {"batt[2] cell count override:", "CC2", 0, 0,12," cells",0,1 },
-  {"dual battery config:", "BC", 1, { "parallel", "series", "dual with alert on B1", "dual with alert on B2", "volts on B1, curr on B2", "volts on B2, curr on B1", "off" }, { 1, 2, 3, 4, 5, 6, 7 } },
+  {"dual battery config:", "BC", 1, { "parallel", "parellel combined", "off" }, { 1, 2, 3} },
   {"enable battery % by voltage:", "BPBV", 1, { "no", "yes" }, { false, true } },
   {"default voltage source:", "VS", 1, { "auto", "FLVSS", "fc" }, { nil, "vs", "fc" } },
   {"disable all sounds:", "S1", 1, { "no", "yes" }, { false, true } },

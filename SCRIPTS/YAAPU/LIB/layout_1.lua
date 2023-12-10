@@ -38,24 +38,28 @@ local function draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
   drawLib.drawRArrow(240,174,20,math.floor(telemetry.homeAngle - telemetry.yaw),CUSTOM_COLOR)--HomeDirection(telemetry)
   -- with dual battery default is to show aggregate view
-  if status.batt2sources.fc or status.batt2sources.vs then
-    if status.showDualBattery == false then
-      -- dual battery: aggregate view
-      rightPanel.drawPane(380,drawLib,conf,telemetry,status,alarms,battery,0,utils)
-      -- left pane info
-      leftPanel.drawPane(0,drawLib,conf,telemetry,status,alarms,battery,0,utils)
-    else
-      -- dual battery:battery 2 right pane
-      rightPanel.drawPane(380,drawLib,conf,telemetry,status,alarms,battery,2,utils)
-      -- dual battery:battery 1 left pane
-      rightPanel.drawPane(0,drawLib,conf,telemetry,status,alarms,battery,1,utils)
-    end
-  else
-    -- battery 1 right pane in single battery mode
-    rightPanel.drawPane(380,drawLib,conf,telemetry,status,alarms,battery,1,utils)
-    -- left pane info  in single battery mode
-    leftPanel.drawPane(0,drawLib,conf,telemetry,status,alarms,battery,0,utils)
-  end
+  -- if status.batt2sources.fc or status.batt2sources.vs then
+  --   if status.showDualBattery == false then
+  --     -- dual battery: aggregate view
+  --     rightPanel.drawPane(380,drawLib,conf,telemetry,status,alarms,battery,0,utils)
+  --     -- left pane info
+  --     leftPanel.drawPane(0,drawLib,conf,telemetry,status,alarms,battery,0,utils)
+  --   else
+  --     -- dual battery:battery 2 right pane
+  --     rightPanel.drawPane(380,drawLib,conf,telemetry,status,alarms,battery,2,utils)
+  --     -- dual battery:battery 1 left pane
+  --     rightPanel.drawPane(0,drawLib,conf,telemetry,status,alarms,battery,1,utils)
+  --   end
+  -- else
+  --   -- battery 1 right pane in single battery mode
+  --   rightPanel.drawPane(380,drawLib,conf,telemetry,status,alarms,battery,1,utils)
+  --   -- left pane info  in single battery mode
+  --   leftPanel.drawPane(0,drawLib,conf,telemetry,status,alarms,battery,0,utils)
+  -- end
+  rightPanel.drawPane(380,drawLib,conf,telemetry,status,alarms,battery,0,utils)
+  -- left pane info
+  leftPanel.drawPane(0,drawLib,conf,telemetry,status,alarms,battery,utils)
+
   -- throttle %
   lcd.setColor(CUSTOM_COLOR,0x0000)
   lcd.drawText(315, 154, "Thr(%)", SMLSIZE+CUSTOM_COLOR+RIGHT)
