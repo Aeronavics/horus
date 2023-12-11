@@ -37,33 +37,27 @@ local function draw_batt_info(position_x,position_y,drawLib,conf,battery)
 
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
   -- battery voltage
-  lcd.drawNumber(position_x+77, position_y+16, battery.AC_voltage, PREC1+DBLSIZE+RIGHT+flags)
-  lcd.drawText(position_x+77, position_y+16, "V", flags+DBLSIZE)
-
-
+  lcd.drawText(position_x+97, position_y+16, battery.AC_voltage .. "V", DBLSIZE+RIGHT+flags)
 
   if conf.battConf == 1 and conf.currDisp == 1 then --Hybrid Mode
     lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x+97, position_y+52, "Generator", SMLSIZE+RIGHT+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
-    lcd.drawNumber(position_x+80,position_y+64, battery.Batt1_current, PREC1+MIDSIZE+RIGHT+CUSTOM_COLOR)
-    lcd.drawText(position_x+80, position_y+64, "A", flags+MIDSIZE)
+    lcd.drawText(position_x+97,position_y+64, battery.Batt1_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
     
     lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x+97, position_y+98, "Battery", SMLSIZE+RIGHT+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
-    lcd.drawNumber(position_x+80,position_y+110, battery.Batt2_current, PREC1+MIDSIZE+RIGHT+CUSTOM_COLOR)
-    lcd.drawText(position_x+80, position_y+110, "A", flags+MIDSIZE)
+    lcd.drawText(position_x+97,position_y+110, battery.Batt2_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
   else --Single source or combined mode
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white 
-    lcd.drawNumber(position_x+80,position_y+48, battery.AC_current, PREC1+MIDSIZE+RIGHT+CUSTOM_COLOR)
-    lcd.drawText(position_x+80, position_y+48, "A", flags+MIDSIZE)
+    lcd.drawText(position_x+97,position_y+48, battery.AC_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
   end
 
   lcd.setColor(CUSTOM_COLOR,0x0000)
   lcd.drawText(position_x+97, position_y+154, "Power(W)", SMLSIZE+CUSTOM_COLOR+RIGHT)
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white 
-  lcd.drawNumber(position_x+97, position_y+166, battery.AC_power_draw, PREC2+MIDSIZE+RIGHT+CUSTOM_COLOR)
+  lcd.drawText(position_x+97, position_y+166, battery.AC_power_draw, MIDSIZE+RIGHT+CUSTOM_COLOR)
 
 
 end
