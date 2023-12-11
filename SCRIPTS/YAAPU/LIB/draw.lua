@@ -418,7 +418,7 @@ local function drawArmStatus(status,telemetry,utils)
     if (telemetry.statusArmed == 1) then
       lcd.drawBitmap(utils.getBitmap("armed"),LCD_W/2 - 90,154)
     else
-      utils.drawBlinkBitmap("disarmed",LCD_W/2 - 90,154)
+      utils.drawBlinkBitmap("disarmed",LCD_W/2 - 90,68)
     end
   end
 end
