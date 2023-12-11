@@ -42,7 +42,7 @@ local function draw_batt_info(position_x,position_y,drawLib,conf,telemetry,statu
 
 
 
-  if conf.battConf == 1 then --Parellel Mode
+  if conf.battConf == 1 and conf.currDisp == 1 then --Hybrid Mode
     drawLib.drawNumberWithDim(position_x+77,position_y+47,position_x+79,position_y+58,battery[7],"A",MIDSIZE+RIGHT+CUSTOM_COLOR+(battery[19] == 0 and PREC1 or 0),SMLSIZE+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x+95, position_y+75, "Generator", SMLSIZE+RIGHT+CUSTOM_COLOR)
@@ -52,7 +52,7 @@ local function draw_batt_info(position_x,position_y,drawLib,conf,telemetry,statu
     lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x+95, position_y+125, "Battery", SMLSIZE+RIGHT+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
-  elseif conf.battConf == 2 then --Parellel Combined Mode
+  elseif conf.battConf == 1 then --Hybrid Combined Mode
     drawLib.drawNumberWithDim(position_x+77,position_y+47,position_x+79,position_y+58,battery[7],"A",MIDSIZE+RIGHT+CUSTOM_COLOR+(battery[19] == 0 and PREC1 or 0),SMLSIZE+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x+95, position_y+75, "Total", SMLSIZE+RIGHT+CUSTOM_COLOR)  
@@ -124,19 +124,6 @@ local function draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,
   draw_sid_info(0, 0, drawLib,conf,telemetry,status,alarms,battery,utils)
   --Draw GPS info below HUD
   draw_gps_info(0, 129, drawLib,conf,telemetry,status,alarms,battery,utils)
-
-
-  lcd.setColor(CUSTOM_COLOR,0x0000)
-  -- RPM 1
-  if conf.enableRPM == 2  or conf.enableRPM == 3 then
-    lcd.drawText(92, 154, "RPM 1", SMLSIZE+RIGHT+CUSTOM_COLOR)
-    drawLib.drawBar("rpm1", 4, 169, 86, 22, 0xFE60, math.abs(telemetry.rpm1), MIDSIZE)
-  end
-  -- RPM 2
-  if conf.enableRPM == 3 then
-    lcd.drawText(192, 154, "RPM 2", SMLSIZE+RIGHT+CUSTOM_COLOR)
-    drawLib.drawBar("rpm2", 104, 169, 86, 22, 0xFE60, math.abs(telemetry.rpm2), MIDSIZE)
-  end
 
   utils.drawTopBar()
   local msgRows = 4

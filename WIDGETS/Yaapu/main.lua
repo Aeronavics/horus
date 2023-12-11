@@ -432,7 +432,8 @@ local conf = {
   minAltitudeAlert = 0,
   maxAltitudeAlert = 0,
   maxDistanceAlert = 0,
-  battConf = 1, -- 1=parallel,2=other
+  battConf = 1, -- 1=hybrid, 2=battery
+  currDisp = 1,
   cell1Count = 0,
   cell2Count = 0,
   enableBattPercByVoltage = false,

@@ -63,13 +63,14 @@ local unitLongLabel = getGeneralSettings().imperial == 0 and "km" or "mi"
 --
 local menuItems = {
   {"voice language:", "L1", 1, { "english", "italian", "french", "german" } , {"en","it","fr","de"} },
+  {"power source:", "BC", 1, { "hybrid", "battery"}, { 1, 2} },
+  {"current display (for hybrids):", "CD", 1, {"seperate", "combined"}, { 1, 2}},
   {"batt alert level 1:", "V1", 3800, 0,5000,"V",PREC2,5 },
   {"batt alert level 2:", "V2", 3600, 0,5000,"V",PREC2,5 },
   {"batt[1] capacity override:", "B1", 0, 0,5000,"Ah",PREC2,10 },
   {"batt[2] capacity override:", "B2", 0, 0,5000,"Ah",PREC2,10 },
   {"batt[1] cell count override:", "CC", 0, 0,12," cells",0,1 },
   {"batt[2] cell count override:", "CC2", 0, 0,12," cells",0,1 },
-  {"power source:", "BC", 1, { "hybrid", "hybrid combined", "battery" }, { 1, 2, 3} },
   {"enable battery % by voltage:", "BPBV", 1, { "no", "yes" }, { false, true } },
   {"default voltage source:", "VS", 1, { "auto", "FLVSS", "fc" }, { nil, "vs", "fc" } },
   {"disable all sounds:", "S1", 1, { "no", "yes" }, { false, true } },
@@ -380,6 +381,7 @@ local function applyConfigValues(conf)
   conf.maxDistanceAlert = getMenuItemByName(menuItems,"D1")
   conf.repeatAlertsPeriod = getMenuItemByName(menuItems,"T2")
   conf.battConf = getMenuItemByName(menuItems,"BC")
+  conf.currDisp = getMenuItemByName(menuItems,"CD")  
   conf.cell1Count = getMenuItemByName(menuItems,"CC")
   conf.cell2Count = getMenuItemByName(menuItems,"CC2")
   conf.rangeFinderMax = getMenuItemByName(menuItems,"RM")
