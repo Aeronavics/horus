@@ -80,7 +80,7 @@ local function drawTopBar(telemetry, utils)
   lcd.drawFilledRectangle(LCD_W-4, 7, 2, 4, CUSTOM_COLOR) --Head of battery
 end
 
-local function draw_batt_info(position_x,position_y,drawLib,conf,battery)
+local function draw_batt_info(position_x,position_y,drawLib,conf,battery,telemetry)
   flags = CUSTOM_COLOR
   lcd.setColor(CUSTOM_COLOR,0x0000)
   lcd.drawText(position_x+97, position_y, "AC Voltage", SMLSIZE+RIGHT+CUSTOM_COLOR)
@@ -88,7 +88,7 @@ local function draw_batt_info(position_x,position_y,drawLib,conf,battery)
   -- battery voltage
   lcd.drawText(position_x+97, position_y+12, battery.AC_voltage .. "V", DBLSIZE+RIGHT+flags)
 
-  if conf.battConf == 1 and conf.currDisp == 1 then --Hybrid Mode
+  if conf.battConf == 1 or (telemetry.hybridconfig and conf.battConf == 3) then --Hybrid Mode
     lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x+97, position_y+48, "Generator", SMLSIZE+RIGHT+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
@@ -98,7 +98,8 @@ local function draw_batt_info(position_x,position_y,drawLib,conf,battery)
     lcd.drawText(position_x+97, position_y+93, "Battery", SMLSIZE+RIGHT+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
     lcd.drawText(position_x+97,position_y+105, battery.Batt2_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
-  else --Single source or combined mode
+
+  else --Battery powered mode
     lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x+97, position_y+48, "AC Current", SMLSIZE+RIGHT+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white 
@@ -163,7 +164,7 @@ local function draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,
   centerPanel.drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
 
   --Draw battery info to right of HUD
-  draw_batt_info(380, 16, drawLib,conf,battery)
+  draw_batt_info(380, 16, drawLib,conf,battery,telemetry)
   --Draw SID info to left of HUD
   draw_sid_info(0, 16, telemetry)
   --Draw GPS info below HUD

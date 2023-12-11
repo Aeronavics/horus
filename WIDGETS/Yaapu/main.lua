@@ -179,6 +179,7 @@ telemetry.batt2volt = 0
 telemetry.batt2current = 0
 telemetry.batt2currentscale = 0
 telemetry.batt2mah = 0
+telemetry.hybridconfig = false
 -- HOME
 telemetry.homeDist = 0
 telemetry.homeAlt = 0
@@ -952,7 +953,11 @@ local function processTelemetry(DATA_ID,VALUE,now)
     telemetry.fencePresent = bit32.extract(VALUE,13,1)
     telemetry.fenceBreached = telemetry.fencePresent == 1 and bit32.extract(VALUE,14,1) or 0 -- ignore if fence is disabled
     telemetry.throttle = math.floor(0.5 + (bit32.extract(VALUE,17,6) * (bit32.extract(VALUE,23,1) == 1 and -1 or 1) * 1.58)) -- signed throttle [-63,63] -> [-100,100]
-    telemetry.sid = bit32.extract(VALUE,24,8)
+    local temp_sid = bit32.extract(VALUE,24,8)
+    if (temp_sid ~= telemetry.sid) then
+      telemetry.sid = temp_sid
+      telemetry.hybridconfig = false --reset hybrid config to check if new aircraft in also a hybrid or batt powered
+    end
   elseif DATA_ID == 0x5002 then -- GPS STATUS
     telemetry.numSats = bit32.extract(VALUE,0,4)
     -- offset  4: NO_GPS = 0, NO_FIX = 1, GPS_OK_FIX_2D = 2, GPS_OK_FIX_3D or GPS_OK_FIX_3D_DGPS or GPS_OK_FIX_3D_RTK_FLOAT or GPS_OK_FIX_3D_RTK_FIXED = 3
@@ -966,6 +971,7 @@ local function processTelemetry(DATA_ID,VALUE,now)
     telemetry.batt1current = bit32.extract(VALUE,12,9) * (bit32.extract(VALUE,10,1) == 1 and -1 or 1) * (bit32.extract(VALUE,21,11) == 0 and 0.1 or 1)
     telemetry.batt1mah = bit32.extract(VALUE,21,11)
   elseif DATA_ID == 0x5008 then -- BATT2
+    telemetry.hybridconfig = true
     telemetry.batt2volt = bit32.extract(VALUE,0,10)/10
     -- telemetry max is 102.3V
     telemetry.batt2current = bit32.extract(VALUE,12,9) * (bit32.extract(VALUE,10,1) == 1 and -1 or 1) * (bit32.extract(VALUE,21,11) == 0 and 0.1 or 1)
