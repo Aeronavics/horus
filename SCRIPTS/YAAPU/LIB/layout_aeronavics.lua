@@ -32,68 +32,123 @@ local customSensorXY = {
   { 480, 193, 480, 203},
 }
 
+local function tx_batt_percent()
+  local perc = 123 - 123/(math.pow(1+math.pow(getValue(getFieldInfo("tx-voltage").id)/7.4, 80), 0.165))
+  return perc
+end
+
+local function drawTopBar(telemetry, utils)
+  lcd.setColor(CUSTOM_COLOR,0x0000)
+  -- black bar
+  lcd.drawFilledRectangle(0,0, LCD_W, 18, CUSTOM_COLOR)
+  -- frametype and model name
+  lcd.setColor(CUSTOM_COLOR,0xFFFF)
+  -- if status.modelString ~= nil then
+  --   lcd.drawText(2, 0, status.modelString, CUSTOM_COLOR)
+  -- end
+  lcd.drawText(2, 0, "Aeronavics", CUSTOM_COLOR)
+  -- flight time
+  -- local time = getDateTime()
+  -- local strtime = string.format("%02d:%02d:%02d",time.hour,time.min,time.sec)
+  -- lcd.drawText(LCD_W, 0, strtime, SMLSIZE+RIGHT+CUSTOM_COLOR)
+  -- RSSI
+  -- RSSI
+  if utils.telemetryEnabled() == false then
+    lcd.setColor(CUSTOM_COLOR,0xF800)
+    lcd.drawText(323-23, 0, "NO TELEM", 0+CUSTOM_COLOR)
+  else
+    utils.drawRssi()
+  end
+  lcd.setColor(CUSTOM_COLOR,0xFFFF)
+
+  -- tx voltage
+  local vtx = string.format("%.1fV",getValue(getFieldInfo("tx-voltage").id))
+  lcd.drawText(LCD_W-24, 0, vtx, RIGHT+CUSTOM_COLOR+SMLSIZE)
+  
+  -- display capacity bar %
+  local perc = tx_batt_percent()
+  lcd.setColor(CUSTOM_COLOR,lcd.RGB(255,255, 255))
+  lcd.drawFilledRectangle(LCD_W-24, 4,20,10,CUSTOM_COLOR)
+  if perc > 50 then
+    lcd.setColor(CUSTOM_COLOR,lcd.RGB(0, 255, 0)) --green
+  elseif perc <= 50 and perc > 10 then
+      lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 204, 0)) -- yellow
+  else
+    lcd.setColor(CUSTOM_COLOR,lcd.RGB(255,0, 0)) --red
+  end
+  lcd.drawGauge(LCD_W-24, 4,20,10,perc,100,CUSTOM_COLOR)
+  lcd.drawFilledRectangle(LCD_W-4, 7, 2, 4, CUSTOM_COLOR) --Head of battery
+end
+
 local function draw_batt_info(position_x,position_y,drawLib,conf,battery)
   flags = CUSTOM_COLOR
 
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
   -- battery voltage
-  lcd.drawText(position_x+97, position_y+16, battery.AC_voltage .. "V", DBLSIZE+RIGHT+flags)
+  lcd.drawText(position_x+97, position_y, battery.AC_voltage .. "V", DBLSIZE+RIGHT+flags)
 
   if conf.battConf == 1 and conf.currDisp == 1 then --Hybrid Mode
     lcd.setColor(CUSTOM_COLOR,0x0000)
-    lcd.drawText(position_x+97, position_y+52, "Generator", SMLSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+97, position_y+36, "Generator", SMLSIZE+RIGHT+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
-    lcd.drawText(position_x+97,position_y+64, battery.Batt1_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+97,position_y+48, battery.Batt1_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
     
     lcd.setColor(CUSTOM_COLOR,0x0000)
-    lcd.drawText(position_x+97, position_y+98, "Battery", SMLSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+97, position_y+82, "Battery", SMLSIZE+RIGHT+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
-    lcd.drawText(position_x+97,position_y+110, battery.Batt2_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+97,position_y+94, battery.Batt2_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
   else --Single source or combined mode
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white 
-    lcd.drawText(position_x+97,position_y+48, battery.AC_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+97,position_y+32, battery.AC_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
   end
 
   lcd.setColor(CUSTOM_COLOR,0x0000)
-  lcd.drawText(position_x+97, position_y+154, "Power(W)", SMLSIZE+CUSTOM_COLOR+RIGHT)
+  lcd.drawText(position_x+97, position_y+138, "Power(W)", SMLSIZE+CUSTOM_COLOR+RIGHT)
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white 
-  lcd.drawText(position_x+97, position_y+166, battery.AC_power_draw, MIDSIZE+RIGHT+CUSTOM_COLOR)
+  lcd.drawText(position_x+97, position_y+150, battery.AC_power_draw, MIDSIZE+RIGHT+CUSTOM_COLOR)
 
 
 end
 
 local function draw_sid_info(position_x,position_y,telemetry)
-  lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
-  -- battery voltage
-  lcd.drawNumber(position_x+95, 16, telemetry.sid , DBLSIZE+RIGHT)
   lcd.setColor(CUSTOM_COLOR,0x0000)
-  lcd.drawText(position_x+95, 47, "AC SID", SMLSIZE+RIGHT+CUSTOM_COLOR)
+  lcd.drawText(position_x+95, position_y, "AC SID", SMLSIZE+RIGHT+CUSTOM_COLOR)
+  lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
+  lcd.drawNumber(position_x+95, position_y+12, telemetry.sid , DBLSIZE+RIGHT)
+  
 end
 
 
 local function draw_gps_info(position_x,position_y,drawLib,telemetry,utils)
   lcd.setColor(CUSTOM_COLOR,0x0000)
-  lcd.drawText(position_x+80, position_y+25, "GPSAlt("..unitLabel..")", SMLSIZE+CUSTOM_COLOR+RIGHT)
-  local alt = telemetry.gpsAlt/10
-  local stralt = string.format("%d",alt*unitScale)
+  lcd.drawText(position_x+95, position_y, "GPSAlt("..unitLabel..")", SMLSIZE+CUSTOM_COLOR+RIGHT)
+  local stralt = string.format("%.1f",telemetry.gpsAlt*unitScale)
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
-  lcd.drawText(position_x+80, position_y+37, stralt, MIDSIZE+RIGHT+CUSTOM_COLOR)
+  lcd.drawText(position_x+95, position_y+12, stralt, MIDSIZE+RIGHT+CUSTOM_COLOR)
+
+  -- if (telemetry.range ~= 0)
+  lcd.setColor(CUSTOM_COLOR,0x0000)
+  lcd.drawText(position_x+95, position_y+45, "RngAlt("..unitLabel..")", SMLSIZE+CUSTOM_COLOR+RIGHT)
+  local stralt = string.format("%.1f",telemetry.range*unitScale)
+  lcd.setColor(CUSTOM_COLOR,0xFFFF)
+  lcd.drawText(position_x+95, position_y+57, stralt, MIDSIZE+RIGHT+CUSTOM_COLOR)
+  -- end
 
   lcd.setColor(CUSTOM_COLOR,0x0000)
-  lcd.drawText(position_x+160, position_y+25, "Travel("..unitLongLabel..")", SMLSIZE+RIGHT+CUSTOM_COLOR)
+  lcd.drawText(position_x+95, position_y+90, "Travel("..unitLongLabel..")", SMLSIZE+RIGHT+CUSTOM_COLOR)
   -- total distance
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
-  lcd.drawNumber(position_x+160, position_y+37, telemetry.totalDist*unitLongScale*100, PREC2+MIDSIZE+RIGHT+CUSTOM_COLOR)
+  lcd.drawNumber(position_x+95, position_y+102, telemetry.totalDist*unitLongScale*100, PREC2+MIDSIZE+RIGHT+CUSTOM_COLOR)
 
   lcd.setColor(CUSTOM_COLOR,0x0000)
-  drawLib.drawHomeIcon(position_x+170, position_y+25,utils)
-  lcd.drawText(position_x+240, position_y+25, "Dist("..unitLabel..")", SMLSIZE+RIGHT+CUSTOM_COLOR)
+  drawLib.drawHomeIcon(LCD_W/2-70, position_y+90,utils)
+  lcd.drawText(LCD_W/2, position_y+92, "Dist("..unitLabel..")", SMLSIZE+RIGHT+CUSTOM_COLOR)
   local strdist = string.format("%d",telemetry.homeDist*unitScale)
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
-  lcd.drawText(position_x+240, position_y+37, strdist, MIDSIZE+RIGHT+CUSTOM_COLOR)
+  lcd.drawText(LCD_W/2, position_y+102, strdist, MIDSIZE+RIGHT+CUSTOM_COLOR)
   
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
-  drawLib.drawRArrow(position_x+265,position_y+45,20,math.floor(telemetry.homeAngle - telemetry.yaw),CUSTOM_COLOR)--HomeDirection(telemetry)
+  drawLib.drawRArrow(LCD_W/2+25,position_y+110,20,math.floor(telemetry.homeAngle - telemetry.yaw),CUSTOM_COLOR)--HomeDirection(telemetry)
 
 end
 
@@ -104,13 +159,13 @@ local function draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,
   centerPanel.drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
 
   --Draw battery info to right of HUD
-  draw_batt_info(380, 0, drawLib,conf,battery)
+  draw_batt_info(380, 16, drawLib,conf,battery)
   --Draw SID info to left of HUD
-  draw_sid_info(0, 0, telemetry)
+  draw_sid_info(0, 16, telemetry)
   --Draw GPS info below HUD
-  draw_gps_info(0, 129, drawLib,telemetry,utils)
+  draw_gps_info(0, 64, drawLib,telemetry,utils)
 
-  utils.drawTopBar()
+  drawTopBar(telemetry, utils)
   local msgRows = 4
   if customSensors ~= nil then
     msgRows = 1

@@ -928,7 +928,7 @@ local function processTelemetry(DATA_ID,VALUE,now)
     -- pitch [0,900] ==> [-90,90]
     telemetry.pitch = (math.min(bit32.extract(VALUE,11,10),900) - 450) * 0.2
     -- number encoded on 11 bits: 10 bits for digits + 1 for 10^power
-    telemetry.range = bit32.extract(VALUE,22,10) * (10^bit32.extract(VALUE,21,1)) -- cm
+    telemetry.range = bit32.extract(VALUE,22,10) * (10^bit32.extract(VALUE,21,1))/100 -- m
   elseif DATA_ID == 0x5005 then -- VELANDYAW
     telemetry.vSpeed = bit32.extract(VALUE,1,7) * (10^bit32.extract(VALUE,0,1)) * (bit32.extract(VALUE,8,1) == 1 and -1 or 1)-- dm/s
     telemetry.yaw = bit32.extract(VALUE,17,11) * 0.2
@@ -959,7 +959,7 @@ local function processTelemetry(DATA_ID,VALUE,now)
     -- offset 14: 0: no advanced fix, 1: GPS_OK_FIX_3D_DGPS, 2: GPS_OK_FIX_3D_RTK_FLOAT, 3: GPS_OK_FIX_3D_RTK_FIXED
     telemetry.gpsStatus = bit32.extract(VALUE,4,2) + bit32.extract(VALUE,14,2)
     telemetry.gpsHdopC = bit32.extract(VALUE,7,7) * (10^bit32.extract(VALUE,6,1)) -- dm
-    telemetry.gpsAlt = bit32.extract(VALUE,24,7) * (10^bit32.extract(VALUE,22,2)) * (bit32.extract(VALUE,31,1) == 1 and -1 or 1)-- dm
+    telemetry.gpsAlt = bit32.extract(VALUE,24,7) * (10^bit32.extract(VALUE,22,2)) * (bit32.extract(VALUE,31,1) == 1 and -1 or 1)/10 -- m
   elseif DATA_ID == 0x5003 then -- BATT
     telemetry.batt1volt = bit32.extract(VALUE,0,10)/10
     -- telemetry max is 102.3V
@@ -1050,7 +1050,7 @@ local function processTelemetry(DATA_ID,VALUE,now)
   telemetry.lastStatusTime = getTime()
 end
 
-local function telemetryEnabled()
+utils.telemetryEnabled = function()
   if telemetry.lastStatusTime == 0 or getTime() - telemetry.lastStatusTime > 200 or getRSSI() == 0 then
     status.noTelemetryData = 1
     status.hideNoTelemetry = false
@@ -1581,7 +1581,7 @@ local function calcFlightTime()
 end
 
 local function setSensorValues()
-  if (not telemetryEnabled()) then
+  if (not utils.telemetryEnabled()) then
     return
   end
   local battmah = telemetry.batt1mah
@@ -1625,11 +1625,6 @@ local function setSensorValues()
   --setTelemetryValue(0x071F, 0, 0, telemetry.pitch, 20 , 0 , "PTCH")
 end
 
-local function tx_batt_percent()
-  local perc = 123 - 123/(math.pow(1+math.pow(getValue(getFieldInfo("tx-voltage").id)/7.4, 80), 0.165))
-  return perc
-end
-
 utils.drawTopBar = function()
   lcd.setColor(CUSTOM_COLOR,0x0000)
   -- black bar
@@ -1646,7 +1641,7 @@ utils.drawTopBar = function()
   -- lcd.drawText(LCD_W, 0, strtime, SMLSIZE+RIGHT+CUSTOM_COLOR)
   -- RSSI
   -- RSSI
-  if telemetryEnabled() == false then
+  if utils.telemetryEnabled() == false then
     lcd.setColor(CUSTOM_COLOR,0xF800)
     lcd.drawText(323-23, 0, "NO TELEM", 0+CUSTOM_COLOR)
   else
@@ -2575,10 +2570,10 @@ local function drawFullScreen(myWidget)
   fgclock = (fgclock % 8) + 1
 
   -- no telemetry/minmax outer box
-  if telemetryEnabled() == false then
+  if utils.telemetryEnabled() == false then
     -- no telemetry inner box
     if not status.hideNoTelemetry then
-      drawLib.drawNoTelemetryData(status,telemetry,utils,telemetryEnabled)
+      drawLib.drawNoTelemetryData(status,telemetry,utils,utils.telemetryEnabled)
     end
     utils.drawBlinkBitmap("warn",0,0)
   else
