@@ -129,7 +129,7 @@ local function draw_gps_info(position_x,position_y,drawLib,telemetry,utils)
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
   lcd.drawText(position_x, position_y+12, stralt, MIDSIZE+CUSTOM_COLOR)
 
-  if (telemetry.range ~= 0)
+  if (telemetry.range ~= 0) then
     lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x, position_y+45, "RngAlt("..unitLabel..")", SMLSIZE+CUSTOM_COLOR)
     local stralt = string.format("%.1f",telemetry.range*unitScale)
