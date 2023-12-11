@@ -416,7 +416,7 @@ local function drawArmStatus(status,telemetry,utils)
   -- armstatus
   if not utils.failsafeActive(telemetry) and status.timerRunning == 0 then
     if (telemetry.statusArmed == 1) then
-      lcd.drawBitmap(utils.getBitmap("armed"),LCD_W/2 - 90,154)
+      lcd.drawBitmap(utils.getBitmap("armed"),LCD_W/2 - 90,188)
     else
       utils.drawBlinkBitmap("disarmed",LCD_W/2 - 90,68)
     end
@@ -505,6 +505,7 @@ local function drawStatusBar(maxRows,conf,telemetry,status,battery,alarms,frame,
   lcd.drawFilledRectangle(0,229-yDelta,480,LCD_H-(229-yDelta),CUSTOM_COLOR)
   -- flight time
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
+  lcd.drawText(LCD_W-86, 224-yDelta+16, "Flight time:", SMLSIZE+CUSTOM_COLOR+RIGHT)
   lcd.drawTimer(LCD_W, 224-yDelta, model.getTimer(2).value, DBLSIZE+CUSTOM_COLOR+RIGHT)
   -- flight mode
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
