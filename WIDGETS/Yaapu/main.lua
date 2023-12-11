@@ -1335,7 +1335,7 @@ end
 local function drawRssi()
   -- RSSI
   lcd.drawText(323, 0, "RS:", 0+CUSTOM_COLOR)
-  lcd.drawText(323 + 30,0, getRSSI(), 0+CUSTOM_COLOR)
+  lcd.drawText(323 + 30,0, getRSSI() .. "%", 0+CUSTOM_COLOR)
 end
 
 local function drawRssiCRSF()
@@ -1625,19 +1625,25 @@ local function setSensorValues()
   --setTelemetryValue(0x071F, 0, 0, telemetry.pitch, 20 , 0 , "PTCH")
 end
 
+local function tx_batt_percent()
+  local perc = 123 - 123/(math.pow(1+math.pow(getValue(getFieldInfo("tx-voltage").id)/7.4, 80), 0.165))
+  return perc
+end
+
 utils.drawTopBar = function()
   lcd.setColor(CUSTOM_COLOR,0x0000)
   -- black bar
   lcd.drawFilledRectangle(0,0, LCD_W, 18, CUSTOM_COLOR)
   -- frametype and model name
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
-  if status.modelString ~= nil then
-    lcd.drawText(2, 0, status.modelString, CUSTOM_COLOR)
-  end
+  -- if status.modelString ~= nil then
+  --   lcd.drawText(2, 0, status.modelString, CUSTOM_COLOR)
+  -- end
+  lcd.drawText(2, 0, "Aeronavics", CUSTOM_COLOR)
   -- flight time
-  local time = getDateTime()
-  local strtime = string.format("%02d:%02d:%02d",time.hour,time.min,time.sec)
-  lcd.drawText(LCD_W, 0, strtime, SMLSIZE+RIGHT+CUSTOM_COLOR)
+  -- local time = getDateTime()
+  -- local strtime = string.format("%02d:%02d:%02d",time.hour,time.min,time.sec)
+  -- lcd.drawText(LCD_W, 0, strtime, SMLSIZE+RIGHT+CUSTOM_COLOR)
   -- RSSI
   -- RSSI
   if telemetryEnabled() == false then
@@ -1647,9 +1653,23 @@ utils.drawTopBar = function()
     utils.drawRssi()
   end
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
+
   -- tx voltage
-  local vtx = string.format("%.1fv",getValue(getFieldInfo("tx-voltage").id))
-  lcd.drawText(391,0, vtx, 0+CUSTOM_COLOR+SMLSIZE)
+  local vtx = string.format("%.1fV",getValue(getFieldInfo("tx-voltage").id))
+  lcd.drawText(LCD_W-24, 0, vtx, RIGHT+CUSTOM_COLOR+SMLSIZE)
+  
+  -- display capacity bar %
+  local perc = tx_batt_percent()
+  lcd.setColor(CUSTOM_COLOR,lcd.RGB(255,255, 255))
+  lcd.drawFilledRectangle(LCD_W-22, 4,20,10,CUSTOM_COLOR)
+  if perc > 50 then
+    lcd.setColor(CUSTOM_COLOR,lcd.RGB(0, 255, 0)) --green
+  elseif perc <= 50 and perc > 25 then
+      lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 204, 0)) -- yellow
+  else
+    lcd.setColor(CUSTOM_COLOR,lcd.RGB(255,0, 0)) --red
+  end
+  lcd.drawGauge(LCD_W-22, 4,20,10,perc,100,CUSTOM_COLOR)
 end
 
 local function drawMessageScreen()
