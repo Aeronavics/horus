@@ -315,6 +315,16 @@ status.unitConversion = {}
 -- BATTERY TABLE
 ---------------------------
 local battery = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+
+local battery_stats = {
+  AC_voltage = 0,
+  Batt1_voltage = 0,
+  Batt2_voltage = 0,
+  AC_current = 0,
+  Batt1_current = 0,
+  Batt2_current = 0,
+  AC_power_draw = 0,
+}
 ---------------------------
 -- LIBRARY LOADING
 ---------------------------
@@ -1199,7 +1209,21 @@ local function calcBattery()
   -- cell2minFC = cell2sumFC/calcCellCount()
   -- cell1minA2 = cell1sumA2/calcCellCount()
   --
+  
   local count1,count2 = calcCellCount()
+
+  battery_stats.Batt1_voltage = telemetry.batt1volt
+  battery_stats.Batt2_voltage = telemetry.batt2volt
+
+  battery_stats.Batt1_current = telemetry.batt1current --curr1
+  battery_stats.Batt2_current = telemetry.batt2current --curr2
+  
+  battery_stats.AC_voltage = getNonZeroMin(battery_stats.Batt1_voltage, battery_stats.Batt2_voltage) --min batt voltage
+  battery_stats.AC_current = telemetry.batt1current + telemetry.batt2current --total current draw
+  battery_stats.AC_power_draw = battery_stats.AC_voltage * battery_stats.AC_current
+
+
+  
 
   battery[2] = getMinVoltageBySource(status.battsource, status.cell1min, status.cell1sumFC/count1, 1)*100 --cel1m
   battery[3] = getMinVoltageBySource(status.battsource, status.cell2min, status.cell2sumFC/count2, 2)*100 --cel2m
@@ -1225,26 +1249,6 @@ local function calcBattery()
   battery[10] = telemetry.batt1mah + telemetry.batt2mah --combined efficiency
 
   battery[13] = battery[14]+battery[15]
-
-  -- if (conf.battConf == 1) then
-  --   battery[1] = getNonZeroMin(battery[2], battery[3])
-  --   battery[4] = getNonZeroMin(battery[5],battery[6])
-  --   battery[7] = utils.getMaxValue(telemetry.batt1current, 7)
-  --   battery[10] = telemetry.batt1mah + telemetry.batt2mah
-  --   battery[13] = getBatt2Capacity() + getBatt1Capacity()
-  -- elseif (conf.battConf == 2) then
-  --   battery[1] = getNonZeroMin(battery[2], battery[3])
-  --   battery[4] = getNonZeroMin(battery[5],battery[6])
-  --   battery[7] = utils.getMaxValue(telemetry.batt1current + telemetry.batt2current, 7)
-  --   battery[10] = telemetry.batt1mah + telemetry.batt2mah
-  --   battery[13] = getBatt2Capacity() + getBatt1Capacity()
-  -- elseif (conf.battConf == 3) then
-  --   battery[1] = battery[2]
-  --   battery[4] = battery[5]
-  --   battery[7] = utils.getMaxValue(telemetry.batt1current,7)
-  --   battery[10] = telemetry.batt1mah
-  --   battery[13] = getBatt1Capacity()
-  -- end
 
   --[[
     discharge curve is based on battery under load, when motors are disarmed
@@ -2514,7 +2518,7 @@ local function drawFullScreen(myWidget)
       ------------------------------------
       lcd.clear(CUSTOM_COLOR)
       if layout ~= nil then
-        layout.draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,utils,customSensors,centerPanel)
+        layout.draw(myWidget,drawLib,conf,telemetry,status,battery_stats,alarms,frame,utils,customSensors,centerPanel)
       else
         loadLayout();
       end

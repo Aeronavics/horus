@@ -32,52 +32,43 @@ local customSensorXY = {
   { 480, 193, 480, 203},
 }
 
-local function draw_batt_info(position_x,position_y,drawLib,conf,telemetry,status,alarms,battery,utils)
+local function draw_batt_info(position_x,position_y,drawLib,conf,battery)
   flags = CUSTOM_COLOR
 
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
   -- battery voltage
-  lcd.drawNumber(position_x+77, position_y+16, battery[4], PREC1+DBLSIZE+RIGHT+flags)
+  lcd.drawNumber(position_x+77, position_y+16, battery.AC_voltage, PREC1+DBLSIZE+RIGHT+flags)
   lcd.drawText(position_x+77, position_y+16, "V", flags+DBLSIZE)
 
 
 
   if conf.battConf == 1 and conf.currDisp == 1 then --Hybrid Mode
-    drawLib.drawNumberWithDim(position_x+77,position_y+47,position_x+79,position_y+58,battery[7],"A",MIDSIZE+RIGHT+CUSTOM_COLOR+(battery[19] == 0 and PREC1 or 0),SMLSIZE+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0x0000)
-    lcd.drawText(position_x+95, position_y+75, "Generator", SMLSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+97, position_y+52, "Generator", SMLSIZE+RIGHT+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
-
-    drawLib.drawNumberWithDim(position_x+77, position_y+95,position_x+79,position_y+106,battery[8],"A",MIDSIZE+RIGHT+CUSTOM_COLOR+(battery[20] == 0 and PREC1 or 0),SMLSIZE+CUSTOM_COLOR)
+    lcd.drawNumber(position_x+80,position_y+64, battery.Batt1_current, PREC1+MIDSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+80, position_y+64, "A", flags+MIDSIZE)
+    
     lcd.setColor(CUSTOM_COLOR,0x0000)
-    lcd.drawText(position_x+95, position_y+125, "Battery", SMLSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+97, position_y+98, "Battery", SMLSIZE+RIGHT+CUSTOM_COLOR)
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
-  elseif conf.battConf == 1 then --Hybrid Combined Mode
-    drawLib.drawNumberWithDim(position_x+77,position_y+47,position_x+79,position_y+58,battery[7],"A",MIDSIZE+RIGHT+CUSTOM_COLOR+(battery[19] == 0 and PREC1 or 0),SMLSIZE+CUSTOM_COLOR)
-    lcd.setColor(CUSTOM_COLOR,0x0000)
-    lcd.drawText(position_x+95, position_y+75, "Total", SMLSIZE+RIGHT+CUSTOM_COLOR)  
-    lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
-  else --Single source mode
-    drawLib.drawNumberWithDim(position_x+77,position_y+47,position_x+79,position_y+58,battery[7],"A",MIDSIZE+RIGHT+CUSTOM_COLOR+(battery[19] == 0 and PREC1 or 0),SMLSIZE+CUSTOM_COLOR)
-    lcd.setColor(CUSTOM_COLOR,0x0000)
-    lcd.drawText(position_x+95, position_y+75, "Battery", SMLSIZE+RIGHT+CUSTOM_COLOR)  
+    lcd.drawNumber(position_x+80,position_y+110, battery.Batt2_current, PREC1+MIDSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+80, position_y+110, "A", flags+MIDSIZE)
+  else --Single source or combined mode
     lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white 
+    lcd.drawNumber(position_x+80,position_y+48, battery.AC_current, PREC1+MIDSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+80, position_y+48, "A", flags+MIDSIZE)
   end
-  
-  lcd.setColor(CUSTOM_COLOR,0x0000)
-  lcd.drawText(position_x+15, position_y+154, "Eff(mAh)", SMLSIZE+CUSTOM_COLOR+RIGHT)
-  lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white 
-  lcd.drawNumber(position_x+15, position_y+166, battery[10], PREC2+MIDSIZE+RIGHT+CUSTOM_COLOR) 
 
   lcd.setColor(CUSTOM_COLOR,0x0000)
-  lcd.drawText(position_x+95, position_y+154, "Power(W)", SMLSIZE+CUSTOM_COLOR+RIGHT)
+  lcd.drawText(position_x+97, position_y+154, "Power(W)", SMLSIZE+CUSTOM_COLOR+RIGHT)
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white 
-  lcd.drawNumber(position_x+95, position_y+166, battery[4]*battery[7], PREC2+MIDSIZE+RIGHT+CUSTOM_COLOR)
+  lcd.drawNumber(position_x+97, position_y+166, battery.AC_power_draw, PREC2+MIDSIZE+RIGHT+CUSTOM_COLOR)
 
 
 end
 
-local function draw_sid_info(position_x,position_y,drawLib,conf,telemetry,status,alarms,battery,utils)
+local function draw_sid_info(position_x,position_y,telemetry)
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
   -- battery voltage
   lcd.drawNumber(position_x+95, 16, telemetry.sid , DBLSIZE+RIGHT)
@@ -86,7 +77,7 @@ local function draw_sid_info(position_x,position_y,drawLib,conf,telemetry,status
 end
 
 
-local function draw_gps_info(position_x,position_y,drawLib,conf,telemetry,status,alarms,battery,utils)
+local function draw_gps_info(position_x,position_y,drawLib,telemetry,utils)
   lcd.setColor(CUSTOM_COLOR,0x0000)
   lcd.drawText(position_x+80, position_y+25, "GPSAlt("..unitLabel..")", SMLSIZE+CUSTOM_COLOR+RIGHT)
   local alt = telemetry.gpsAlt/10
@@ -119,11 +110,11 @@ local function draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,
   centerPanel.drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
 
   --Draw battery info to right of HUD
-  draw_batt_info(380, 0, drawLib,conf,telemetry,status,alarms,battery,utils)
+  draw_batt_info(380, 0, drawLib,conf,battery)
   --Draw SID info to left of HUD
-  draw_sid_info(0, 0, drawLib,conf,telemetry,status,alarms,battery,utils)
+  draw_sid_info(0, 0, telemetry)
   --Draw GPS info below HUD
-  draw_gps_info(0, 129, drawLib,conf,telemetry,status,alarms,battery,utils)
+  draw_gps_info(0, 129, drawLib,telemetry,utils)
 
   utils.drawTopBar()
   local msgRows = 4
