@@ -2578,9 +2578,9 @@ local function drawFullScreen(myWidget)
   -- no telemetry/minmax outer box
   if utils.telemetryEnabled() == false then
     -- no telemetry inner box
-    if not status.hideNoTelemetry then
-      drawLib.drawNoTelemetryData(status,telemetry,utils,utils.telemetryEnabled)
-    end
+    -- if not status.hideNoTelemetry then
+    drawLib.drawNoTelemetryData(status,telemetry,utils)
+    -- end
     utils.drawBlinkBitmap("warn",0,0)
   else
     if status.showMinMaxValues == true then

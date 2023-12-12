@@ -414,26 +414,21 @@ end
 
 local function drawArmStatus(status,telemetry,utils)
   -- armstatus
-  if not utils.failsafeActive(telemetry) and status.timerRunning == 0 then
+  if (not utils.failsafeActive(telemetry) and status.timerRunning == 0) and utils.telemetryEnabled() then
     if (telemetry.statusArmed == 1) then
       lcd.drawBitmap(utils.getBitmap("armed"),LCD_W/2 - 90,188)
     else
-      utils.drawBlinkBitmap("disarmed",LCD_W/2 - 90,68)
+      lcd.drawBitmap(utils.getBitmap("disarmed"),LCD_W/2 - 90,68)
     end
   end
 end
 
-local function drawNoTelemetryData(status,telemetry,utils,telemetryEnabled)
+local function drawNoTelemetryData(status,telemetry,utils)
   -- no telemetry data
-  if (not telemetryEnabled()) then
-    lcd.setColor(CUSTOM_COLOR,0xFFFF)
-    lcd.drawFilledRectangle(88,74, 304, 84, CUSTOM_COLOR)
-    lcd.setColor(CUSTOM_COLOR,0xF800)
-    lcd.drawFilledRectangle(90,76, 300, 80, CUSTOM_COLOR)
-    lcd.setColor(CUSTOM_COLOR,0xFFFF)
-    lcd.drawText(110, 85, "no telemetry data", DBLSIZE+CUSTOM_COLOR)
-    lcd.drawText(130, 120, "Yaapu Telemetry Widget 1.9.5", SMLSIZE+CUSTOM_COLOR)
-  end
+  lcd.setColor(CUSTOM_COLOR,0xF800)
+  lcd.drawFilledRectangle(LCD_W/2-180,75, 360, 80, CUSTOM_COLOR)
+  lcd.setColor(CUSTOM_COLOR,0xFFFF)
+  lcd.drawText(LCD_W/2, 95, "waiting for connection", CENTER+DBLSIZE+CUSTOM_COLOR)                   
 end
 
 local function drawFilledRectangle(x,y,w,h,flags)
@@ -547,9 +542,9 @@ local function drawStatusBar(maxRows,conf,telemetry,status,battery,alarms,frame,
     else
       lcd.drawNumber(170,235-yDelta,telemetry.numSats, MIDSIZE+CUSTOM_COLOR)
     end
-  elseif telemetry.gpsStatus == 0 then
-    utils.drawBlinkBitmap("nogpsicon",150,227-yDelta)
-  else
+  elseif telemetry.gpsStatus == 0 and utils.telemetryEnabled() then
+    utils.drawBitmap("nogpsicon",150,227-yDelta)
+  elseif utils.telemetryEnabled() then
     utils.drawBlinkBitmap("nolockicon",150,227-yDelta)
   end
   
