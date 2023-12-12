@@ -543,7 +543,7 @@ local function drawStatusBar(maxRows,conf,telemetry,status,battery,alarms,frame,
       lcd.drawNumber(170,235-yDelta,telemetry.numSats, MIDSIZE+CUSTOM_COLOR)
     end
   elseif telemetry.gpsStatus == 0 and utils.telemetryEnabled() then
-    utils.drawBitmap("nogpsicon",150,227-yDelta)
+    utils.drawBlinkBitmap("nogpsicon",150,227-yDelta)
   elseif utils.telemetryEnabled() then
     utils.drawBlinkBitmap("nolockicon",150,227-yDelta)
   end
