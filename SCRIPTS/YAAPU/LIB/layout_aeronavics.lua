@@ -82,77 +82,62 @@ end
 
 local function draw_batt_info(position_x,position_y,drawLib,conf,battery,telemetry)
   flags = CUSTOM_COLOR
-  lcd.setColor(CUSTOM_COLOR,0x0000)
-  lcd.drawText(position_x+97, position_y, "AC Voltage", SMLSIZE+RIGHT+CUSTOM_COLOR)
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
+  lcd.drawText(position_x+97, position_y, "AC Voltage", SMLSIZE+RIGHT+CUSTOM_COLOR)
   -- battery voltage
   lcd.drawText(position_x+97, position_y+12, battery.AC_voltage .. "V", DBLSIZE+RIGHT+flags)
 
   if conf.battConf == 1 or (telemetry.hybridconfig and conf.battConf == 3) then --Hybrid Mode
-    lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x+97, position_y+48, "Generator", SMLSIZE+RIGHT+CUSTOM_COLOR)
-    lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
     lcd.drawText(position_x+97,position_y+60, battery.Batt1_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
     
-    lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x+97, position_y+93, "Battery", SMLSIZE+RIGHT+CUSTOM_COLOR)
-    lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
     lcd.drawText(position_x+97,position_y+105, battery.Batt2_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
 
   else --Battery powered mode
-    lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x+97, position_y+48, "AC Current", SMLSIZE+RIGHT+CUSTOM_COLOR)
-    lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white 
     lcd.drawText(position_x+97,position_y+60, battery.AC_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
   end
 
-  lcd.setColor(CUSTOM_COLOR,0x0000)
   lcd.drawText(position_x+97, position_y+138, "AC Power", SMLSIZE+CUSTOM_COLOR+RIGHT)
-  lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white 
   lcd.drawText(position_x+97, position_y+150, battery.AC_power_draw.."W", MIDSIZE+RIGHT+CUSTOM_COLOR)
 
 
 end
 
 local function draw_sid_info(position_x,position_y,telemetry)
-  lcd.setColor(CUSTOM_COLOR,0x0000)
-  lcd.drawText(position_x, position_y, "AC SID", SMLSIZE+CUSTOM_COLOR)
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
+  lcd.drawText(position_x, position_y, "AC SID", SMLSIZE+CUSTOM_COLOR)
   lcd.drawNumber(position_x, position_y+12, telemetry.sid , DBLSIZE)
   
 end
 
 
 local function draw_gps_info(position_x,position_y,drawLib,telemetry,utils)
-  lcd.setColor(CUSTOM_COLOR,0x0000)
-  lcd.drawText(position_x, position_y, "GPSAlt("..unitLabel..")", SMLSIZE+CUSTOM_COLOR)
-  local stralt = string.format("%.1f",telemetry.gpsAlt*unitScale)
-  lcd.setColor(CUSTOM_COLOR,0xFFFF)
-  lcd.drawText(position_x, position_y+12, stralt, MIDSIZE+CUSTOM_COLOR)
+  lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
 
+  if telemetry.gpsStatus > 2 then 
+    lcd.drawText(position_x, position_y, "Alt(AMSL, "..unitLabel..")", SMLSIZE+CUSTOM_COLOR)
+    local stralt = string.format("%.1f",telemetry.gpsAlt*unitScale)
+    lcd.drawText(position_x, position_y+12, stralt, MIDSIZE+CUSTOM_COLOR)
+  end
+  
   if (telemetry.range ~= 0) then
-    lcd.setColor(CUSTOM_COLOR,0x0000)
     lcd.drawText(position_x, position_y+45, "RngAlt("..unitLabel..")", SMLSIZE+CUSTOM_COLOR)
     local stralt = string.format("%.1f",telemetry.range*unitScale)
-    lcd.setColor(CUSTOM_COLOR,0xFFFF)
     lcd.drawText(position_x, position_y+57, stralt, MIDSIZE+CUSTOM_COLOR)
   end
 
-  lcd.setColor(CUSTOM_COLOR,0x0000)
   lcd.drawText(position_x, position_y+90, "Travel("..unitLongLabel..")", SMLSIZE+CUSTOM_COLOR)
   -- total distance
-  lcd.setColor(CUSTOM_COLOR,0xFFFF)
   local strtravel = string.format("%.2f",telemetry.totalDist*unitScale)
   lcd.drawText(position_x, position_y+102, strtravel, MIDSIZE+CUSTOM_COLOR)
 
-  lcd.setColor(CUSTOM_COLOR,0x0000)
   drawLib.drawHomeIcon(LCD_W/2-70, position_y+92,utils)
   lcd.drawText(LCD_W/2, position_y+90, "Dist("..unitLabel..")", SMLSIZE+RIGHT+CUSTOM_COLOR)
   local strdist = string.format("%d",telemetry.homeDist*unitScale)
-  lcd.setColor(CUSTOM_COLOR,0xFFFF)
   lcd.drawText(LCD_W/2, position_y+102, strdist, MIDSIZE+RIGHT+CUSTOM_COLOR)
   
-  lcd.setColor(CUSTOM_COLOR,0xFFFF)
   drawLib.drawRArrow(LCD_W/2+25,position_y+110,20,math.floor(telemetry.homeAngle - telemetry.yaw),CUSTOM_COLOR)--HomeDirection(telemetry)
 
 end
