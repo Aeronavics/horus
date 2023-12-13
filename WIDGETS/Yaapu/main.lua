@@ -2231,7 +2231,7 @@ local function init()
   -- load battery config
   utils.loadBatteryConfigFile()
   -- ok done
-  utils.pushMessage(7,"Yaapu Telemetry Widget 1.9.5".." ("..'c47a1df'..")")
+  utils.pushMessage(7,"Aeronavics Status Screen Active")
   utils.playSound("yaapu")
   -- fix for generalsettings lazy loading...
   unitScale = getGeneralSettings().imperial == 0 and 1 or 3.28084
