@@ -500,9 +500,9 @@ local function drawStatusBar(maxRows,conf,telemetry,status,battery,alarms,frame,
   lcd.drawFilledRectangle(0,229-yDelta,480,LCD_H-(229-yDelta),CUSTOM_COLOR)
   -- flight time
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
-  lcd.drawText(LCD_W-86, 228-yDelta, "Flight", SMLSIZE+CUSTOM_COLOR+RIGHT)
-  lcd.drawText(LCD_W-86, 240-yDelta, "  time", SMLSIZE+CUSTOM_COLOR+RIGHT)
-  lcd.drawTimer(LCD_W, 224-yDelta, model.getTimer(2).value, DBLSIZE+CUSTOM_COLOR+RIGHT)
+  lcd.drawText(LCD_W-90, 228-yDelta, "Flight", SMLSIZE+CUSTOM_COLOR+RIGHT)
+  lcd.drawText(LCD_W-90, 240-yDelta, "  time", SMLSIZE+CUSTOM_COLOR+RIGHT)
+  lcd.drawTimer(LCD_W-3, 224-yDelta, model.getTimer(2).value, DBLSIZE+CUSTOM_COLOR+RIGHT)
   -- flight mode
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
   if status.strFlightMode ~= nil then
