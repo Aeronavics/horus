@@ -85,7 +85,8 @@ local function draw_batt_info(position_x,position_y,drawLib,conf,battery,telemet
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
   lcd.drawText(position_x+97, position_y, "AC Voltage", SMLSIZE+RIGHT+CUSTOM_COLOR)
   -- battery voltage
-  lcd.drawText(position_x+97, position_y+12, battery.AC_voltage .. "V", DBLSIZE+RIGHT+flags)
+  local strvolt = string.format("%.1f",battery.AC_voltage)
+  lcd.drawText(position_x+97, position_y+12, strvolt .. "V", DBLSIZE+RIGHT+flags)
 
   if conf.battConf == 1 or (telemetry.hybridconfig and conf.battConf == 3) then --Hybrid Mode
     lcd.drawText(position_x+97, position_y+48, "Generator", SMLSIZE+RIGHT+CUSTOM_COLOR)
