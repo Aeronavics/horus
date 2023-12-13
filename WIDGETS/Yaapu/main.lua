@@ -120,11 +120,11 @@ frameTypes[11]  = "b"
 utils.gpsStatuses = {}
 utils.gpsStatuses[0]="NoGPS"
 utils.gpsStatuses[1]="NoLock"
-utils.gpsStatuses[2]="2D"
-utils.gpsStatuses[3]="3D"
+utils.gpsStatuses[2]="2D Fix"
+utils.gpsStatuses[3]="3D Fix"
 utils.gpsStatuses[4]="DGPS"
 utils.gpsStatuses[5]="RTKFlt"
-utils.gpsStatuses[6]="RTKFxd"
+utils.gpsStatuses[6]="RTKFix"
 
 --[[
 0	MAV_SEVERITY_EMERGENCY	System is unusable. This is a "panic" condition.
@@ -963,7 +963,7 @@ local function processTelemetry(DATA_ID,VALUE,now)
     -- offset  4: NO_GPS = 0, NO_FIX = 1, GPS_OK_FIX_2D = 2, GPS_OK_FIX_3D or GPS_OK_FIX_3D_DGPS or GPS_OK_FIX_3D_RTK_FLOAT or GPS_OK_FIX_3D_RTK_FIXED = 3
     -- offset 14: 0: no advanced fix, 1: GPS_OK_FIX_3D_DGPS, 2: GPS_OK_FIX_3D_RTK_FLOAT, 3: GPS_OK_FIX_3D_RTK_FIXED
     telemetry.gpsStatus = bit32.extract(VALUE,4,2) + bit32.extract(VALUE,14,2)
-    telemetry.gpsHdopC = bit32.extract(VALUE,7,7) * (10^bit32.extract(VALUE,6,1)) -- dm
+    telemetry.gpsHdopC = bit32.extract(VALUE,7,7) * (10^bit32.extract(VALUE,6,1))/10 -- m
     telemetry.gpsAlt = bit32.extract(VALUE,24,7) * (10^bit32.extract(VALUE,22,2)) * (bit32.extract(VALUE,31,1) == 1 and -1 or 1)/10 -- m
   elseif DATA_ID == 0x5003 then -- BATT
     telemetry.batt1volt = bit32.extract(VALUE,0,10)/10

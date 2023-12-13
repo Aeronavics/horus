@@ -500,7 +500,8 @@ local function drawStatusBar(maxRows,conf,telemetry,status,battery,alarms,frame,
   lcd.drawFilledRectangle(0,229-yDelta,480,LCD_H-(229-yDelta),CUSTOM_COLOR)
   -- flight time
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
-  lcd.drawText(LCD_W-86, 224-yDelta+16, "Flight time:", SMLSIZE+CUSTOM_COLOR+RIGHT)
+  lcd.drawText(LCD_W-86, 228-yDelta, "Flight", SMLSIZE+CUSTOM_COLOR+RIGHT)
+  lcd.drawText(LCD_W-86, 240-yDelta, "  time", SMLSIZE+CUSTOM_COLOR+RIGHT)
   lcd.drawTimer(LCD_W, 224-yDelta, model.getTimer(2).value, DBLSIZE+CUSTOM_COLOR+RIGHT)
   -- flight mode
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
@@ -508,45 +509,37 @@ local function drawStatusBar(maxRows,conf,telemetry,status,battery,alarms,frame,
     lcd.drawText(1,230-yDelta,status.strFlightMode,MIDSIZE+CUSTOM_COLOR)
   end
   -- gps status, draw coordinatyes if good at least once
-  if telemetry.lon ~= nil and telemetry.lat ~= nil then
-    lcd.drawText(370, 227-yDelta, telemetry.strLat, SMLSIZE+CUSTOM_COLOR+RIGHT)
-    lcd.drawText(370, 241-yDelta, telemetry.strLon, SMLSIZE+CUSTOM_COLOR+RIGHT)
-  end
+  -- if telemetry.lon ~= nil and telemetry.lat ~= nil then
+  --   lcd.drawText(370, 227-yDelta, telemetry.strLat, SMLSIZE+CUSTOM_COLOR+RIGHT)
+  --   lcd.drawText(370, 241-yDelta, telemetry.strLon, SMLSIZE+CUSTOM_COLOR+RIGHT)
+  -- end
   -- gps status
   local hdop = telemetry.gpsHdopC
   local strStatus = utils.gpsStatuses[telemetry.gpsStatus]
   local flags = BLINK
-  local mult = 1
-  
-  if telemetry.gpsStatus  > 2 then
-    if telemetry.homeAngle ~= -1 then
-      flags = PREC1
-    end
-    if hdop > 999 then
-      hdop = 999
-      flags = 0
-      mult=0.1
-    elseif hdop > 99 then
-      flags = 0
-      mult=0.1
-    end
-    lcd.drawNumber(270,226-yDelta, hdop*mult,DBLSIZE+flags+RIGHT+CUSTOM_COLOR)
-    -- SATS
-    lcd.setColor(CUSTOM_COLOR,0xFFFF)
-    lcd.drawText(170,226-yDelta, strStatus, SMLSIZE+CUSTOM_COLOR)
 
-    lcd.setColor(CUSTOM_COLOR,0xFFFF)
-    if telemetry.numSats == 15 then
-      lcd.drawNumber(170,235-yDelta, telemetry.numSats, MIDSIZE+CUSTOM_COLOR)
-      lcd.drawText(200,239-yDelta, "+", SMLSIZE+CUSTOM_COLOR)
-    else
-      lcd.drawNumber(170,235-yDelta,telemetry.numSats, MIDSIZE+CUSTOM_COLOR)
-    end
-  elseif telemetry.gpsStatus == 0 and utils.telemetryEnabled() then
-    utils.drawBlinkBitmap("nogpsicon",150,227-yDelta)
-  elseif utils.telemetryEnabled() then
-    utils.drawBlinkBitmap("nolockicon",150,227-yDelta)
+  lcd.drawBitmap(Bitmap.open("/SCRIPTS/YAAPU/IMAGES/satellite.bmp"),120, 231-yDelta)
+  
+  if telemetry.numSats == 15 then
+    lcd.drawText(150,228-yDelta, telemetry.numSats.."+ Sats", SMLSIZE+CUSTOM_COLOR)
+  else
+    lcd.drawText(150,228-yDelta,telemetry.numSats.." Sats", SMLSIZE+CUSTOM_COLOR)
   end
+  
+  if (telemetry.gpsHdopC < 99) then
+    local strhdop = string.format("%.1fm HDOP",hdop*unitScale)
+    lcd.drawText(150,240-yDelta, strhdop, SMLSIZE+CUSTOM_COLOR)
+  else
+    lcd.drawText(150,240-yDelta, "99m+ HDOP", SMLSIZE+CUSTOM_COLOR)
+  end
+  
+
+  -- SATS
+  lcd.setColor(CUSTOM_COLOR,0xFFFF)
+  lcd.drawText(230,230-yDelta, strStatus, MIDSIZE+CUSTOM_COLOR)
+
+  lcd.setColor(CUSTOM_COLOR,0xFFFF)
+
   
   local offset = math.min(maxRows,#status.messages+1)
   for i=0,offset-1 do
