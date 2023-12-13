@@ -968,13 +968,13 @@ local function processTelemetry(DATA_ID,VALUE,now)
   elseif DATA_ID == 0x5003 then -- BATT
     telemetry.batt1volt = bit32.extract(VALUE,0,10)/10
     -- telemetry max is 102.3V
-    telemetry.batt1current = bit32.extract(VALUE,12,9) * (bit32.extract(VALUE,10,1) == 1 and -1 or 1) * (bit32.extract(VALUE,21,11) == 0 and 0.1 or 1)
+    telemetry.batt1current = bit32.extract(VALUE,12,9) * (bit32.extract(VALUE,10,1) == 1 and -1 or 1) * (bit32.extract(VALUE,11,1) == 0 and 0.1 or 1)
     telemetry.batt1mah = bit32.extract(VALUE,21,11)
   elseif DATA_ID == 0x5008 then -- BATT2
     telemetry.hybridconfig = true
     telemetry.batt2volt = bit32.extract(VALUE,0,10)/10
     -- telemetry max is 102.3V
-    telemetry.batt2current = bit32.extract(VALUE,12,9) * (bit32.extract(VALUE,10,1) == 1 and -1 or 1) * (bit32.extract(VALUE,21,11) == 0 and 0.1 or 1)
+    telemetry.batt2current = bit32.extract(VALUE,12,9) * (bit32.extract(VALUE,10,1) == 1 and -1 or 1) * (bit32.extract(VALUE,11,1) == 0 and 0.1 or 1)
     telemetry.batt2mah = bit32.extract(VALUE,21,11)
   elseif DATA_ID == 0x5004 then -- HOME
     telemetry.homeDist = bit32.extract(VALUE,2,10) * (10^bit32.extract(VALUE,0,2))
