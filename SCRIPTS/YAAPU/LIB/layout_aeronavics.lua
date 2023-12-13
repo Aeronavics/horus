@@ -130,7 +130,7 @@ local function draw_gps_info(position_x,position_y,drawLib,telemetry,utils)
 
   lcd.drawText(position_x + 3, position_y+90, "Travel("..unitLongLabel..")", SMLSIZE+CUSTOM_COLOR)
   -- total distance
-  local strtravel = string.format("%.2f",telemetry.totalDist*unitScale)
+  local strtravel = string.format("%.2f",telemetry.totalDist*unitLongScale)
   lcd.drawText(position_x + 3, position_y+102, strtravel, MIDSIZE+CUSTOM_COLOR)
 
   drawLib.drawHomeIcon(LCD_W/2-70, position_y+92,utils)
