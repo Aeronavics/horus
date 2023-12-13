@@ -107,8 +107,8 @@ end
 
 local function draw_sid_info(position_x,position_y,telemetry)
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
-  lcd.drawText(position_x, position_y, "AC SID", SMLSIZE+CUSTOM_COLOR)
-  lcd.drawNumber(position_x, position_y+12, telemetry.sid , DBLSIZE)
+  lcd.drawText(position_x + 3, position_y, "AC SID", SMLSIZE+CUSTOM_COLOR)
+  lcd.drawNumber(position_x + 3, position_y+12, telemetry.sid , DBLSIZE)
   
 end
 
@@ -117,21 +117,21 @@ local function draw_gps_info(position_x,position_y,drawLib,telemetry,utils)
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
 
   if telemetry.gpsStatus > 2 then 
-    lcd.drawText(position_x, position_y, "Alt(AMSL, "..unitLabel..")", SMLSIZE+CUSTOM_COLOR)
+    lcd.drawText(position_x + 3, position_y, "Alt(AMSL, "..unitLabel..")", SMLSIZE+CUSTOM_COLOR)
     local stralt = string.format("%.1f",telemetry.gpsAlt*unitScale)
-    lcd.drawText(position_x, position_y+12, stralt, MIDSIZE+CUSTOM_COLOR)
+    lcd.drawText(position_x + 3, position_y+12, stralt, MIDSIZE+CUSTOM_COLOR)
   end
   
   if (telemetry.range ~= 0) then
-    lcd.drawText(position_x, position_y+45, "RngAlt("..unitLabel..")", SMLSIZE+CUSTOM_COLOR)
+    lcd.drawText(position_x + 3, position_y+45, "RngAlt("..unitLabel..")", SMLSIZE+CUSTOM_COLOR)
     local stralt = string.format("%.1f",telemetry.range*unitScale)
-    lcd.drawText(position_x, position_y+57, stralt, MIDSIZE+CUSTOM_COLOR)
+    lcd.drawText(position_x+ 3, position_y+57, stralt, MIDSIZE+CUSTOM_COLOR)
   end
 
-  lcd.drawText(position_x, position_y+90, "Travel("..unitLongLabel..")", SMLSIZE+CUSTOM_COLOR)
+  lcd.drawText(position_x + 3, position_y+90, "Travel("..unitLongLabel..")", SMLSIZE+CUSTOM_COLOR)
   -- total distance
   local strtravel = string.format("%.2f",telemetry.totalDist*unitScale)
-  lcd.drawText(position_x, position_y+102, strtravel, MIDSIZE+CUSTOM_COLOR)
+  lcd.drawText(position_x + 3, position_y+102, strtravel, MIDSIZE+CUSTOM_COLOR)
 
   drawLib.drawHomeIcon(LCD_W/2-70, position_y+92,utils)
   lcd.drawText(LCD_W/2, position_y+90, "Dist("..unitLabel..")", SMLSIZE+RIGHT+CUSTOM_COLOR)
@@ -167,8 +167,6 @@ local function draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,
   drawLib.drawArmStatus(status,telemetry,utils)
   local nextX = drawLib.drawTerrainStatus(utils,status,telemetry,101,19)
   drawLib.drawFenceStatus(utils,status,telemetry,nextX,19)
-
-  lcd.setColor(CUSTOM_COLOR,0xFFFF)
 end
 
 return {draw=draw}
