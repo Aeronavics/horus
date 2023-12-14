@@ -90,10 +90,10 @@ local function draw_batt_info(position_x,position_y,drawLib,conf,battery,telemet
 
   if conf.battConf == 1 or (telemetry.hybridconfig and conf.battConf == 3) then --Hybrid Mode
     lcd.drawText(position_x+97, position_y+48, "Generator", SMLSIZE+RIGHT+CUSTOM_COLOR)
-    lcd.drawText(position_x+97,position_y+60, battery.Batt1_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+97,position_y+60, battery.Batt2_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
     
     lcd.drawText(position_x+97, position_y+93, "Battery", SMLSIZE+RIGHT+CUSTOM_COLOR)
-    lcd.drawText(position_x+97,position_y+105, battery.Batt2_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
+    lcd.drawText(position_x+97,position_y+105, battery.Batt1_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
 
   else --Battery powered mode
     lcd.drawText(position_x+97, position_y+48, "AC Current", SMLSIZE+RIGHT+CUSTOM_COLOR)
