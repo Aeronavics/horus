@@ -1057,7 +1057,7 @@ local function processTelemetry(DATA_ID,VALUE,now)
 end
 
 utils.telemetryEnabled = function()
-  if telemetry.lastStatusTime == 0 or getTime() - telemetry.lastStatusTime > 200 or getRSSI() == 0 then
+  if telemetry.lastStatusTime == 0 or getTime() - telemetry.lastStatusTime > 500 or getRSSI() == 0 then
     status.noTelemetryData = 1
     status.hideNoTelemetry = false
   else
@@ -2574,19 +2574,6 @@ local function drawFullScreen(myWidget)
     end
   end
   fgclock = (fgclock % 8) + 1
-
-  -- no telemetry/minmax outer box
-  if utils.telemetryEnabled() == false then
-    -- no telemetry inner box
-    -- if not status.hideNoTelemetry then
-    drawLib.drawNoTelemetryData(status,telemetry,utils)
-    -- end
-    utils.drawBlinkBitmap("warn",0,0)
-  else
-    if status.showMinMaxValues == true then
-      utils.drawBlinkBitmap("minmax",0,0)
-    end
-  end
 
   drawLib.drawFailsafe(telemetry,utils);
 
