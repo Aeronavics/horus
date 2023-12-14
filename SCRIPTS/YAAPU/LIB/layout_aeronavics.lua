@@ -97,7 +97,7 @@ local function draw_batt_info(position_x,position_y,drawLib,conf,battery,telemet
 
   else --Battery powered mode
     lcd.drawText(position_x+97, position_y+48, "AC Current", SMLSIZE+RIGHT+CUSTOM_COLOR)
-    if (battery.AC_current < 1 and battery.AC_current ~= 0) then
+    if (battery.AC_current < 1 and battery.AC_current ~= 0) then --Current sensors unreliable below 1A
       lcd.drawText(position_x+97,position_y+60, "<1A", MIDSIZE+RIGHT+CUSTOM_COLOR)
     else
       lcd.drawText(position_x+97,position_y+60, battery.AC_current .. "A", MIDSIZE+RIGHT+CUSTOM_COLOR)
@@ -107,8 +107,11 @@ local function draw_batt_info(position_x,position_y,drawLib,conf,battery,telemet
   end
 
   lcd.drawText(position_x+97, position_y+138, "AC Power", SMLSIZE+CUSTOM_COLOR+RIGHT)
-  lcd.drawText(position_x+97, position_y+150, battery.AC_power_draw.."W", MIDSIZE+RIGHT+CUSTOM_COLOR)
-
+  if (battery.AC_current < 1 and battery.AC_current ~= 0) then --Current sensors unreliable below 1A
+    lcd.drawText(position_x+97, position_y+150, "<50W", MIDSIZE+RIGHT+CUSTOM_COLOR)
+  else
+    lcd.drawText(position_x+97, position_y+150, battery.AC_power_draw.."W", MIDSIZE+RIGHT+CUSTOM_COLOR)
+  end
 
 end
 

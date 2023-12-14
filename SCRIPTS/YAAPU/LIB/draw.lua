@@ -528,7 +528,7 @@ local function drawStatusBar(maxRows,conf,telemetry,status,battery,alarms,frame,
     lcd.drawText(150,228-yDelta,telemetry.numSats.." Sats", SMLSIZE+CUSTOM_COLOR)
   end
   
-  if (telemetry.gpsHdopC < 99) then
+  if (telemetry.gpsHdopC <= 99) then
     local strhdop = string.format("%.1fm HDOP",hdop*unitScale)
     lcd.drawText(150,240-yDelta, strhdop, SMLSIZE+CUSTOM_COLOR)
   else
