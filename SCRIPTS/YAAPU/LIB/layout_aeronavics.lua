@@ -174,6 +174,19 @@ local function draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,
   drawLib.drawArmStatus(status,telemetry,utils)
   local nextX = drawLib.drawTerrainStatus(utils,status,telemetry,101,19)
   drawLib.drawFenceStatus(utils,status,telemetry,nextX,19)
+
+  -- no telemetry/minmax outer box
+  if utils.telemetryEnabled() == false then
+    -- no telemetry inner box
+    -- if not status.hideNoTelemetry then
+    drawLib.drawNoTelemetryData(status,telemetry,utils)
+    -- end
+    utils.drawBlinkBitmap("warn",0,0)
+  else
+    if status.showMinMaxValues == true then
+      utils.drawBlinkBitmap("minmax",0,0)
+    end
+  end
 end
 
 return {draw=draw}
