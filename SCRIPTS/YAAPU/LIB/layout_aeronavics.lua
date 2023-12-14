@@ -72,7 +72,7 @@ local function drawTopBar(telemetry, utils)
   if perc > 50 then
     lcd.setColor(CUSTOM_COLOR,lcd.RGB(0, 255, 0)) --green
   elseif perc <= 50 and perc > 10 then
-      lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 204, 0)) -- yellow
+    lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 204, 0)) -- yellow
   else
     lcd.setColor(CUSTOM_COLOR,lcd.RGB(255,0, 0)) --red
   end

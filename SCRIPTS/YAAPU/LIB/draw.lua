@@ -414,11 +414,13 @@ end
 
 local function drawArmStatus(status,telemetry,utils)
   -- armstatus
-  if (not utils.failsafeActive(telemetry) and status.timerRunning == 0) and utils.telemetryEnabled() then
+  if utils.telemetryEnabled() then
     if (telemetry.statusArmed == 1) then
-      lcd.drawBitmap(utils.getBitmap("armed"),LCD_W/2 - 90,188)
+      lcd.setColor(CUSTOM_COLOR,lcd.RGB(0, 255, 0)) --green
+      lcd.drawText(LCD_W/2, 0, "ARMED", CENTER+CUSTOM_COLOR)
     else
-      lcd.drawBitmap(utils.getBitmap("disarmed"),LCD_W/2 - 90,68)
+      lcd.setColor(CUSTOM_COLOR,0xF800) --red
+      lcd.drawText(LCD_W/2, 0, "DISARMED", CENTER+CUSTOM_COLOR)
     end
   end
 end
