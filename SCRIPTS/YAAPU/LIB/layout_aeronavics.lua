@@ -33,7 +33,7 @@ local customSensorXY = {
 }
 
 local function tx_batt_percent()
-  local perc = 123 - 123/(math.pow(1+math.pow(getValue(getFieldInfo("tx-voltage").id)/7.4, 80), 0.165))
+  local perc = 123 - 123/(math.pow(1+math.pow(getValue(getFieldInfo("tx-voltage").id)/7.1, 80), 0.124))
   return perc
 end
 
@@ -71,7 +71,7 @@ local function drawTopBar(telemetry, utils)
   lcd.drawFilledRectangle(LCD_W-24, 4,20,10,CUSTOM_COLOR)
   if perc > 50 then
     lcd.setColor(CUSTOM_COLOR,lcd.RGB(0, 255, 0)) --green
-  elseif perc <= 50 and perc > 10 then
+  elseif perc <= 40 and perc > 10 then
     lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 204, 0)) -- yellow
   else
     lcd.setColor(CUSTOM_COLOR,lcd.RGB(255,0, 0)) --red
