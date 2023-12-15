@@ -210,32 +210,18 @@ local function drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
   -------------------------------------
   -- DATA
   -- altitude
-  local homeAlt = utils.getMaxValue(telemetry.homeAlt,11) * unitScale
-  local alt = homeAlt
-  if status.terrainEnabled == 1 then
-    alt = telemetry.heightAboveTerrain * unitScale
-    lcd.setColor(CUSTOM_COLOR,lcd.RGB(0, 0, 0))
-    lcd.drawRectangle(314, 100, 56, 12, SOLID+CUSTOM_COLOR)
-    lcd.drawFilledRectangle(314, 100, 56, 12, SOLID, CUSTOM_COLOR)
-  end
+  local alt = utils.getMaxValue(telemetry.homeAlt,11) * unitScale
   lcd.setColor(CUSTOM_COLOR,lcd.RGB(00, 0xED, 0x32)) --green
-
+  
   if math.abs(alt) > 999 or alt < -99 then
-    lcd.drawNumber(381,69,alt,MIDSIZE+CUSTOM_COLOR+RIGHT)
-    if status.terrainEnabled == 1 then
-      lcd.drawNumber(372,94,homeAlt,CUSTOM_COLOR+RIGHT)
-    end
+    lcd.drawNumber(370,70,alt,MIDSIZE+CUSTOM_COLOR+RIGHT)
   elseif math.abs(alt) >= 10 then
-    lcd.drawNumber(381,65,alt,DBLSIZE+CUSTOM_COLOR+RIGHT)
-    if status.terrainEnabled == 1 then
-      lcd.drawNumber(372,94,homeAlt,CUSTOM_COLOR+RIGHT)
-    end
+    lcd.drawNumber(370,70,alt,MIDSIZE+CUSTOM_COLOR+RIGHT)
   else
-    lcd.drawNumber(381,65,alt*10,DBLSIZE+PREC1+CUSTOM_COLOR+RIGHT)
-    if status.terrainEnabled == 1 then
-      lcd.drawNumber(372,94,homeAlt*10,PREC1+CUSTOM_COLOR+RIGHT)
-    end
+    lcd.drawNumber(370,70,alt*10,MIDSIZE+PREC1+CUSTOM_COLOR+RIGHT)
   end
+  lcd.drawText(381,80,"m",SMLSIZE+CUSTOM_COLOR+RIGHT)
+
   --
 
   -- telemetry.hSpeed and telemetry.airspeed are in dm/s
@@ -252,16 +238,21 @@ local function drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
   end
   lcd.setColor(CUSTOM_COLOR,lcd.RGB(00, 0xED, 0x32)) --green
   if (math.abs(speed) >= 10) then
-    lcd.drawNumber(102,65,speed,DBLSIZE+CUSTOM_COLOR)
+    lcd.drawNumber(102,70,speed,MIDSIZE+CUSTOM_COLOR)
     if status.airspeedEnabled == 1 then
       lcd.drawNumber(102,94,hSpeed,CUSTOM_COLOR)
+    else
+      lcd.drawText(138, 80, "m/s", SMLSIZE+CUSTOM_COLOR)
     end
   else
-    lcd.drawNumber(102,65,speed*10,DBLSIZE+CUSTOM_COLOR+PREC1)
+    lcd.drawNumber(102,70,speed*10,MIDSIZE+CUSTOM_COLOR+PREC1)
     if status.airspeedEnabled == 1 then
       lcd.drawNumber(102,94,hSpeed*10,CUSTOM_COLOR+PREC1)
+    else
+      lcd.drawText(138, 80, "m/s", SMLSIZE+CUSTOM_COLOR)
     end
   end
+  
 
   -- wind
   if conf.enableWIND == true then
@@ -281,19 +272,19 @@ local function drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
     drawLib.drawVArrow(301, 73,true,false,utils)
   end
 
-  -- vspeed box
-  lcd.setColor(CUSTOM_COLOR,0xFFFF)
+  -- -- vspeed box
+  -- lcd.setColor(CUSTOM_COLOR,0xFFFF)
 
-  local vSpeed = utils.getMaxValue(telemetry.vSpeed,13) * 0.1 -- m/s
+  -- local vSpeed = utils.getMaxValue(telemetry.vSpeed,13) * 0.1 -- m/s
 
-  local xx = math.abs(vSpeed*conf.vertSpeedMultiplier) > 999 and 4 or 3
-  xx = xx + (vSpeed*conf.vertSpeedMultiplier < 0 and 1 or 0)
+  -- local xx = math.abs(vSpeed*conf.vertSpeedMultiplier) > 999 and 4 or 3
+  -- xx = xx + (vSpeed*conf.vertSpeedMultiplier < 0 and 1 or 0)
 
-  if math.abs(vSpeed*conf.vertSpeedMultiplier*10) > 99 then --
-    lcd.drawNumber(240 + (xx/2)*12, 127, vSpeed*conf.vertSpeedMultiplier, MIDSIZE+CUSTOM_COLOR+RIGHT)
-  else
-    lcd.drawNumber(240 + (xx/2)*12, 127, vSpeed*conf.vertSpeedMultiplier*10, MIDSIZE+CUSTOM_COLOR+RIGHT+PREC1)
-  end
+  -- if math.abs(vSpeed*conf.vertSpeedMultiplier*10) > 99 then --
+  --   lcd.drawNumber(240 + (xx/2)*12, 127, vSpeed*conf.vertSpeedMultiplier, MIDSIZE+CUSTOM_COLOR+RIGHT)
+  -- else
+  --   lcd.drawNumber(240 + (xx/2)*12, 127, vSpeed*conf.vertSpeedMultiplier*10, MIDSIZE+CUSTOM_COLOR+RIGHT+PREC1)
+  -- end
 
   -- compass ribbon
   drawLib.drawCompassRibbon(18,myWidget,conf,telemetry,status,battery,utils,240,120,360,25,true)
