@@ -126,10 +126,12 @@ end
 local function draw_gps_info(position_x,position_y,drawLib,telemetry,utils)
   lcd.setColor(CUSTOM_COLOR,0xFFFF) -- white
 
+  lcd.drawText(position_x + 3, position_y, "Alt(AMSL, "..unitLabel..")", SMLSIZE+CUSTOM_COLOR)
   if telemetry.gpsStatus > 2 then 
-    lcd.drawText(position_x + 3, position_y, "Alt(AMSL, "..unitLabel..")", SMLSIZE+CUSTOM_COLOR)
     local stralt = string.format("%.1f",telemetry.gpsAlt*unitScale)
     lcd.drawText(position_x + 3, position_y+12, stralt, MIDSIZE+CUSTOM_COLOR)
+  else
+    lcd.drawText(position_x + 3, position_y+12, "---", MIDSIZE+CUSTOM_COLOR)
   end
   
   if (telemetry.range ~= 0) then
