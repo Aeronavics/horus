@@ -520,8 +520,9 @@ local function drawStatusBar(maxRows,conf,telemetry,status,battery,alarms,frame,
   local strStatus = utils.gpsStatuses[telemetry.gpsStatus]
   local flags = BLINK
 
-  lcd.drawBitmap(Bitmap.open("/SCRIPTS/YAAPU/IMAGES/satellite.bmp"),120, 231-yDelta)
-  
+  -- lcd.drawBitmap(Bitmap.open("/SCRIPTS/YAAPU/IMAGES/satellite.bmp"),120, 231-yDelta)
+  lcd.drawBitmap(utils.getBitmap("satellite"),120, 231-yDelta)
+
   if telemetry.numSats == 15 then
     lcd.drawText(150,228-yDelta, telemetry.numSats.."+ Sats", SMLSIZE+CUSTOM_COLOR)
   else
