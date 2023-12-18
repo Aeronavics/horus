@@ -404,11 +404,14 @@ end
 
 local function drawFailsafe(telemetry,utils)
   if telemetry.ekfFailsafe > 0 then
-    utils.drawBlinkBitmap("ekffailsafe",LCD_W/2 - 90,154)
+    utils.drawBlinkBitmap("warn",0,0)
+    utils.drawBlinkBitmap("ekffailsafe",LCD_W/2 - 90,LCD_H/2-30)
   elseif telemetry.battFailsafe > 0 then
-    utils.drawBlinkBitmap("battfailsafe",LCD_W/2 - 90,154)
+    utils.drawBlinkBitmap("warn",0,0)
+    utils.drawBlinkBitmap("battfailsafe",LCD_W/2 - 90,LCD_H/2-30)
   elseif telemetry.failsafe > 0 then
-    utils.drawBlinkBitmap("failsafe",LCD_W/2 - 90,154)
+    utils.drawBlinkBitmap("warn",0,0)
+    utils.drawBlinkBitmap("failsafe",LCD_W/2 - 90,LCD_H/2-30)
   end
 end
 
