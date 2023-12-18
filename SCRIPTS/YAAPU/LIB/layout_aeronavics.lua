@@ -69,7 +69,7 @@ local function drawTopBar(telemetry, utils)
   local perc = tx_batt_percent()
   lcd.setColor(CUSTOM_COLOR,lcd.RGB(255,255, 255))
   lcd.drawFilledRectangle(LCD_W-24, 4,20,10,CUSTOM_COLOR)
-  if perc > 50 then
+  if perc > 40 then
     lcd.setColor(CUSTOM_COLOR,lcd.RGB(0, 255, 0)) --green
   elseif perc <= 40 and perc > 10 then
     lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 204, 0)) -- yellow
