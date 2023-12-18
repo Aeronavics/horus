@@ -189,21 +189,21 @@ local function drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
   -------------------------------------
   -- vario
   -------------------------------------
-  local varioMax = 5
-  local varioSpeed = math.min(math.abs(0.1*telemetry.vSpeed),5)
-  local varioH = varioSpeed/varioMax*52
-  --varioH = varioH + (varioH > 0 and 1 or 0)
-  if telemetry.vSpeed > 0 then
-    varioY = 19 + (52 - varioH)
-  else
-    varioY = 85 + 15
-  end
-  --00ae10
-  lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 0xce, 0))      --yellow
-  -- lcd.setColor(CUSTOM_COLOR,lcd.RGB(00, 0xED, 0x32)) --green
-  -- lcd.setColor(CUSTOM_COLOR,lcd.RGB(50, 50, 50))     --dark grey
-  -- lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 255, 255))  --white
-  lcd.drawFilledRectangle(372, varioY, 8, varioH, CUSTOM_COLOR, 0)
+  -- local varioMax = 5
+  -- local varioSpeed = math.min(math.abs(0.1*telemetry.vSpeed),5)
+  -- local varioH = varioSpeed/varioMax*52
+  -- --varioH = varioH + (varioH > 0 and 1 or 0)
+  -- if telemetry.vSpeed > 0 then
+  --   varioY = 19 + (52 - varioH)
+  -- else
+  --   varioY = 85 + 15
+  -- end
+  -- --00ae10
+  -- lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 0xce, 0))      --yellow
+  -- -- lcd.setColor(CUSTOM_COLOR,lcd.RGB(00, 0xED, 0x32)) --green
+  -- -- lcd.setColor(CUSTOM_COLOR,lcd.RGB(50, 50, 50))     --dark grey
+  -- -- lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 255, 255))  --white
+  -- lcd.drawFilledRectangle(372, varioY, 8, varioH, CUSTOM_COLOR, 0)
 
   -------------------------------------
   -- left and right indicators on HUD
@@ -211,16 +211,18 @@ local function drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
   -- DATA
   -- altitude
   local alt = utils.getMaxValue(telemetry.homeAlt,11) * unitScale
-  lcd.setColor(CUSTOM_COLOR,lcd.RGB(00, 0xED, 0x32)) --green
-  
+  -- lcd.setColor(CUSTOM_COLOR,lcd.RGB(00, 0xED, 0x32)) --green
+  lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 255, 255))
   if math.abs(alt) > 999 or alt < -99 then
-    lcd.drawNumber(370,70,alt,MIDSIZE+CUSTOM_COLOR+RIGHT)
+    lcd.drawNumber(369,76,alt,MIDSIZE+CUSTOM_COLOR+RIGHT)
   elseif math.abs(alt) >= 10 then
-    lcd.drawNumber(370,70,alt,MIDSIZE+CUSTOM_COLOR+RIGHT)
+    lcd.drawNumber(369,76,alt,MIDSIZE+CUSTOM_COLOR+RIGHT)
   else
-    lcd.drawNumber(370,70,alt*10,MIDSIZE+PREC1+CUSTOM_COLOR+RIGHT)
+    lcd.drawNumber(369,76,alt*10,MIDSIZE+PREC1+CUSTOM_COLOR+RIGHT)
   end
-  lcd.drawText(381,80,"m",SMLSIZE+CUSTOM_COLOR+RIGHT)
+  lcd.drawText(381,86,"m",SMLSIZE+CUSTOM_COLOR+RIGHT)
+  lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 255, 255))
+  lcd.drawText(379,67,"Home Alt",SMLSIZE+CUSTOM_COLOR+RIGHT)
 
   --
 
@@ -236,22 +238,23 @@ local function drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
     lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 255, 255))
     lcd.drawText(166,98,"G",CUSTOM_COLOR+SMLSIZE+RIGHT)
   end
-  lcd.setColor(CUSTOM_COLOR,lcd.RGB(00, 0xED, 0x32)) --green
+  -- lcd.setColor(CUSTOM_COLOR,lcd.RGB(00, 0xED, 0x32)) --green
+  lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 255, 255))
   if (math.abs(speed) >= 10) then
-    lcd.drawNumber(102,70,speed,MIDSIZE+CUSTOM_COLOR)
+    lcd.drawNumber(102,76,speed,MIDSIZE+CUSTOM_COLOR)
     if status.airspeedEnabled == 1 then
       lcd.drawNumber(102,94,hSpeed,CUSTOM_COLOR)
-    else
-      lcd.drawText(138, 80, "m/s", SMLSIZE+CUSTOM_COLOR)
     end
   else
-    lcd.drawNumber(102,70,speed*10,MIDSIZE+CUSTOM_COLOR+PREC1)
+    lcd.drawNumber(102,76,speed*10,MIDSIZE+CUSTOM_COLOR+PREC1)
     if status.airspeedEnabled == 1 then
       lcd.drawNumber(102,94,hSpeed*10,CUSTOM_COLOR+PREC1)
-    else
-      lcd.drawText(138, 80, "m/s", SMLSIZE+CUSTOM_COLOR)
     end
   end
+
+  lcd.drawText(138, 86, "m/s", SMLSIZE+CUSTOM_COLOR)
+  lcd.setColor(CUSTOM_COLOR,lcd.RGB(255, 255, 255))
+  lcd.drawText(102, 67, "Speed", SMLSIZE+CUSTOM_COLOR)
   
 
   -- wind

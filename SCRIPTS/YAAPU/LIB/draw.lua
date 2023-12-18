@@ -481,21 +481,24 @@ local function drawCompassRibbon(y,myWidget,conf,telemetry,status,battery,utils,
   elseif angle >= 90 and angle < 180 then
     homeOffset = width
   end
-  drawHomeIcon(xMin + homeOffset -5,minY + (bigFont and 28 or 20),utils)
+  drawHomeIcon(xMin + homeOffset -5,minY + (bigFont and 38 or 30),utils)
   
   -- text box
-  local w = 60 -- 3 digits width
+  local w = 70 -- 3 digits width
   if heading < 0 then heading = heading + 360 end
   if heading < 10 then
-      w = 20
+      w = 30
   elseif heading < 100 then
-      w = 40
+      w = 50
   end
-  local scale = bigFont and 1 or 0.7
   lcd.setColor(CUSTOM_COLOR, 0x0000)
-  lcd.drawFilledRectangle(midX - (w/2)*scale, minY-2, w*scale, 28*scale, CUSTOM_COLOR+SOLID)
+  lcd.drawFilledRectangle(midX - (w/2), minY-2, w, 32, CUSTOM_COLOR+SOLID)
   lcd.setColor(CUSTOM_COLOR, 0xFFFF)
-  lcd.drawNumber(midX, bigFont and minY-6 or minY-2, heading, CUSTOM_COLOR+(bigFont and DBLSIZE or 0)+CENTER)
+  local heading_str = string.format("%d",heading)
+  lcd.drawText(midX-5, minY-2, heading_str, CUSTOM_COLOR+CENTER+DBLSIZE)
+  lcd.drawText(midX+w/2-2, minY-5, "o", CUSTOM_COLOR+RIGHT+SMLSIZE)
+
+  -- lcd.drawNumber(midX, bigFont and minY-2 or minY+2, heading, CUSTOM_COLOR+DBLSIZE+CENTER)
 end
 
 local function drawStatusBar(maxRows,conf,telemetry,status,battery,alarms,frame,utils)
