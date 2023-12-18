@@ -53,12 +53,12 @@ local function drawTopBar(telemetry, utils)
   -- lcd.drawText(LCD_W, 0, strtime, SMLSIZE+RIGHT+CUSTOM_COLOR)
   -- RSSI
   -- RSSI
-  if utils.telemetryEnabled() == false then
-    lcd.setColor(CUSTOM_COLOR,0xF800)
-    lcd.drawText(323-23, 0, "NO TELEM", 0+CUSTOM_COLOR)
-  else
-    utils.drawRssi()
-  end
+  -- if utils.telemetryEnabled() == false then
+  --   lcd.setColor(CUSTOM_COLOR,0xF800)
+  --   lcd.drawText(323-23, 0, "NO TELEM", 0+CUSTOM_COLOR)
+  -- else
+  utils.drawRssi()
+  -- end
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
 
   -- tx voltage

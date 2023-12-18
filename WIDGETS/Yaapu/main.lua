@@ -1340,9 +1340,41 @@ end
 
 local function drawRssi()
   -- RSSI
-  lcd.drawText(323, 0, "RS:", 0+CUSTOM_COLOR)
-  lcd.drawText(323 + 30,0, getRSSI() .. "%", 0+CUSTOM_COLOR)
+  -- lcd.drawText(323, 0, "RS:", 0+CUSTOM_COLOR)
+  -- lcd.drawText(323 + 30,0, getRSSI() .. "%", 0+CUSTOM_COLOR)
+  lcd.drawBitmap(utils.getBitmap("controller"), 339, 0)
+  
+  --Draw signal bars
+  local RSSI_percent = getRSSI()
+
+  if (RSSI_percent > 60) then
+    lcd.setColor(CUSTOM_COLOR, GREY)
+  else
+    lcd.setColor(CUSTOM_COLOR, RED)
+  end
+  lcd.drawRectangle(339+18, 13, 3, 3, CUSTOM_COLOR)
+  lcd.drawRectangle(339+23, 10, 3, 6, CUSTOM_COLOR)
+  lcd.drawRectangle(339+28, 7, 3, 9, CUSTOM_COLOR)
+  lcd.drawRectangle(339+33, 4, 3, 12, CUSTOM_COLOR)
+  lcd.drawRectangle(339+38, 1, 3, 15, CUSTOM_COLOR)
+  lcd.setColor(CUSTOM_COLOR,0xFFFF)
+  if (RSSI_percent > 0) then
+    lcd.drawFilledRectangle(339+18, 13, 3, 3, CUSTOM_COLOR)
+  end
+  if (RSSI_percent > 20) then
+    lcd.drawFilledRectangle(339+23, 10, 3, 6, CUSTOM_COLOR)
+  end
+  if (RSSI_percent > 40) then
+    lcd.drawFilledRectangle(339+28, 7, 3, 9, CUSTOM_COLOR)
+  end
+  if (RSSI_percent > 60) then
+    lcd.drawFilledRectangle(339+33, 4, 3, 12, CUSTOM_COLOR)
+  end
+  if (RSSI_percent > 80) then
+    lcd.drawFilledRectangle(339+38, 1, 3, 15, CUSTOM_COLOR)
+  end
 end
+
 
 local function drawRssiCRSF()
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
