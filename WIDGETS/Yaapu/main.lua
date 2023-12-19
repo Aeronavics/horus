@@ -1338,41 +1338,58 @@ local function drainTelemetryQueues()
   end
 end
 
-local function drawRssi()
-  -- RSSI
-  -- lcd.drawText(323, 0, "RS:", 0+CUSTOM_COLOR)
-  -- lcd.drawText(323 + 30,0, getRSSI() .. "%", 0+CUSTOM_COLOR)
-  lcd.drawBitmap(utils.getBitmap("controller"), 339, 0)
-  
-  --Draw signal bars
-  local RSSI_percent = getRSSI()
-
+local function drawSignalBars(RSSI_percent, start_x)
   if (RSSI_percent > 60) then
     lcd.setColor(CUSTOM_COLOR, GREY)
   else
     lcd.setColor(CUSTOM_COLOR, RED)
   end
-  lcd.drawRectangle(339+18, 13, 3, 3, CUSTOM_COLOR)
-  lcd.drawRectangle(339+23, 10, 3, 6, CUSTOM_COLOR)
-  lcd.drawRectangle(339+28, 7, 3, 9, CUSTOM_COLOR)
-  lcd.drawRectangle(339+33, 4, 3, 12, CUSTOM_COLOR)
-  lcd.drawRectangle(339+38, 1, 3, 15, CUSTOM_COLOR)
+  lcd.drawRectangle(start_x, 13, 3, 3, CUSTOM_COLOR)
+  lcd.drawRectangle(start_x+5, 10, 3, 6, CUSTOM_COLOR)
+  lcd.drawRectangle(start_x+10, 7, 3, 9, CUSTOM_COLOR)
+  lcd.drawRectangle(start_x+15, 4, 3, 12, CUSTOM_COLOR)
+  lcd.drawRectangle(start_x+20, 1, 3, 15, CUSTOM_COLOR)
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
   if (RSSI_percent > 0) then
-    lcd.drawFilledRectangle(339+18, 13, 3, 3, CUSTOM_COLOR)
+    lcd.drawFilledRectangle(start_x, 13, 3, 3, CUSTOM_COLOR)
   end
   if (RSSI_percent > 20) then
-    lcd.drawFilledRectangle(339+23, 10, 3, 6, CUSTOM_COLOR)
+    lcd.drawFilledRectangle(start_x+5, 10, 3, 6, CUSTOM_COLOR)
   end
   if (RSSI_percent > 40) then
-    lcd.drawFilledRectangle(339+28, 7, 3, 9, CUSTOM_COLOR)
+    lcd.drawFilledRectangle(start_x+10, 7, 3, 9, CUSTOM_COLOR)
   end
   if (RSSI_percent > 60) then
-    lcd.drawFilledRectangle(339+33, 4, 3, 12, CUSTOM_COLOR)
+    lcd.drawFilledRectangle(start_x+15, 4, 3, 12, CUSTOM_COLOR)
   end
   if (RSSI_percent > 80) then
-    lcd.drawFilledRectangle(339+38, 1, 3, 15, CUSTOM_COLOR)
+    lcd.drawFilledRectangle(start_x+20, 1, 3, 15, CUSTOM_COLOR)
   end
+end
+
+
+local function drawRssi()
+  local start_x = 274
+  -- RSSI
+  -- lcd.drawText(323, 0, "RS:", 0+CUSTOM_COLOR)
+  -- lcd.drawText(323 + 30,0, getRSSI() .. "%", 0+CUSTOM_COLOR)
+  lcd.drawBitmap(utils.getBitmap("controller"), start_x, 0)
+  
+  --Draw signal bars
+  local RSSI_controller = getRSSI()
+  drawSignalBars(RSSI_controller, start_x+18)
+
+  lcd.drawBitmap(utils.getBitmap("gcs"), start_x+45, 0)
+
+  local RSSI_drone = 0
+  drawSignalBars(RSSI_drone, start_x + 63)
+
+  if (RSSI_drone == 0) then
+    lcd.drawBitmap(utils.getBitmap("drone_grey"), start_x+90, 0)
+  else
+    lcd.drawBitmap(utils.getBitmap("drone"), start_x+90, 0)
+  end
+
 end
 
 
