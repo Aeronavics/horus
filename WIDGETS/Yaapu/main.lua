@@ -231,6 +231,9 @@ telemetry.apparentWindAngle = 0
 -- RSSI
 telemetry.rssi = 0
 telemetry.rssiCRSF = 0
+--DRONE_RADIO
+telemetry.drone_rssi = 0
+telemetry.drone_radio_noise = 0
 
 --------------------------------
 -- STATUS DATA
@@ -939,9 +942,6 @@ local function processTelemetry(DATA_ID,VALUE,now)
     else
       telemetry.hSpeed = bit32.extract(VALUE,10,7) * (10^bit32.extract(VALUE,9,1)) -- dm/s
     end
-    if status.airspeedEnabled == 0 then
-      status.airspeedEnabled = bit32.extract(VALUE,28,1)
-    end
   elseif DATA_ID == 0x5001 then -- AP STATUS
     telemetry.flightMode = bit32.extract(VALUE,0,5)
     telemetry.simpleMode = bit32.extract(VALUE,5,2)
@@ -1038,6 +1038,9 @@ local function processTelemetry(DATA_ID,VALUE,now)
     telemetry.trueWindAngle = bit32.extract(VALUE, 0, 7) * 3 -- degrees
     telemetry.apparentWindSpeed = bit32.extract(VALUE,23,7) * (10^bit32.extract(VALUE,22,1)) -- dm/s
     telemetry.apparentWindAngle = bit32.extract(VALUE, 16, 6) * (bit32.extract(VALUE,15,1) == 1 and -1 or 1) * 3 -- degrees
+  elseif DATA_ID == 0x500D then -- RADIO STATUS
+    telemetry.drone_rssi = bit32.extract(VALUE, 0, 8) -- Radio RSSI between 0 - 254
+    telemetry.drone_radio_noise = bit32.extract(VALUE, 8, 8) -- Radio RSSI between 0 - 254
   --[[
   elseif DATA_ID == 0x50F1 then -- RC CHANNELS
     -- channels 1 - 32
@@ -1060,6 +1063,7 @@ utils.telemetryEnabled = function()
   if telemetry.lastStatusTime == 0 or getTime() - telemetry.lastStatusTime > 500 or getRSSI() == 0 then
     status.noTelemetryData = 1
     status.hideNoTelemetry = false
+    telemetry.drone_rssi = 0
   else
     status.noTelemetryData = 0
     status.hideNoTelemetry = true
@@ -1338,11 +1342,11 @@ local function drainTelemetryQueues()
   end
 end
 
-local function drawSignalBars(RSSI_percent, start_x)
+local function drawSignalBars(RSSI_percent, start_x, empty_color)
   if (RSSI_percent > 60) then
     lcd.setColor(CUSTOM_COLOR, GREY)
   else
-    lcd.setColor(CUSTOM_COLOR, RED)
+    lcd.setColor(CUSTOM_COLOR, empty_color)
   end
   lcd.drawRectangle(start_x, 13, 3, 3, CUSTOM_COLOR)
   lcd.drawRectangle(start_x+5, 10, 3, 6, CUSTOM_COLOR)
@@ -1369,7 +1373,7 @@ end
 
 
 local function drawRssi()
-  local start_x = 274
+  local start_x = 290
   -- RSSI
   -- lcd.drawText(323, 0, "RS:", 0+CUSTOM_COLOR)
   -- lcd.drawText(323 + 30,0, getRSSI() .. "%", 0+CUSTOM_COLOR)
@@ -1377,14 +1381,19 @@ local function drawRssi()
   
   --Draw signal bars
   local RSSI_controller = getRSSI()
-  drawSignalBars(RSSI_controller, start_x+18)
+  drawSignalBars(RSSI_controller, start_x+18, RED)
 
-  lcd.drawBitmap(utils.getBitmap("gcs"), start_x+45, 0)
+  if (RSSI_controller == 0) then
+    lcd.drawBitmap(utils.getBitmap("gcs_grey"), start_x+45, 0)
+    drawSignalBars(0, start_x + 63, GREY)
+  else
+    lcd.drawBitmap(utils.getBitmap("gcs"), start_x+45, 0)
+    drawSignalBars(telemetry.drone_rssi*100/255, start_x + 63, RED)
 
-  local RSSI_drone = 0
-  drawSignalBars(RSSI_drone, start_x + 63)
+  end
+  
 
-  if (RSSI_drone == 0) then
+  if (telemetry.drone_rssi == 0) then
     lcd.drawBitmap(utils.getBitmap("drone_grey"), start_x+90, 0)
   else
     lcd.drawBitmap(utils.getBitmap("drone"), start_x+90, 0)
