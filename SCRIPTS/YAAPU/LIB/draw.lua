@@ -529,17 +529,13 @@ local function drawStatusBar(maxRows,conf,telemetry,status,battery,alarms,frame,
   -- lcd.drawBitmap(Bitmap.open("/SCRIPTS/YAAPU/IMAGES/satellite.bmp"),120, 231-yDelta)
   lcd.drawBitmap(utils.getBitmap("satellite"),120, 231-yDelta)
 
-  if telemetry.numSats == 15 then
-    lcd.drawText(150,228-yDelta, telemetry.numSats.."+ Sats", SMLSIZE+CUSTOM_COLOR)
-  else
-    lcd.drawText(150,228-yDelta,telemetry.numSats.." Sats", SMLSIZE+CUSTOM_COLOR)
-  end
+  lcd.drawText(150,228-yDelta,telemetry.numSats.." Sats", SMLSIZE+CUSTOM_COLOR)
   
   if (telemetry.gpsHdopC <= 99) then
-    local strhdop = string.format("%.1fm HDOP",hdop*unitScale)
+    local strhdop = string.format("%.1f HDOP",hdop*unitScale)
     lcd.drawText(150,240-yDelta, strhdop, SMLSIZE+CUSTOM_COLOR)
   else
-    lcd.drawText(150,240-yDelta, "99m+ HDOP", SMLSIZE+CUSTOM_COLOR)
+    lcd.drawText(150,240-yDelta, "99+ HDOP", SMLSIZE+CUSTOM_COLOR)
   end
   
 

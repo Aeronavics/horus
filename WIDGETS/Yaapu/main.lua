@@ -962,7 +962,7 @@ local function processTelemetry(DATA_ID,VALUE,now)
     telemetry.numSats = bit32.extract(VALUE,0,6)
     -- offset  4: NO_GPS = 0, NO_FIX = 1, GPS_OK_FIX_2D = 2, GPS_OK_FIX_3D = 3, GPS_OK_FIX_3D_DGPS = 4, GPS_OK_FIX_3D_RTK_FLOAT = 5, GPS_OK_FIX_3D_RTK_FIXED = 6
     telemetry.gpsStatus = bit32.extract(VALUE,6,4)
-    telemetry.gpsHdopC = bit32.extract(VALUE,10,10)/10 -- m
+    telemetry.gpsHdopC = bit32.extract(VALUE,10,10)/10 -- unitless
     telemetry.gpsAlt = bit32.extract(VALUE,22,7) * (10^bit32.extract(VALUE,20,2)) * (bit32.extract(VALUE,29,1) == 1 and -1 or 1)/10 -- m
   elseif DATA_ID == 0x5003 then -- BATT
     telemetry.batt1volt = bit32.extract(VALUE,0,10)/10
