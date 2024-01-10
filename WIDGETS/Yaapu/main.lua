@@ -285,6 +285,8 @@ status.battLevel2 = false
 status.lastBattLevel = 14
 -- MESSAGES
 status.messages = {}
+status.msgStart = true
+status.msgSeverity = 0
 status.msgBuffer = ""
 status.lastMsgValue = 0
 status.lastMsgTime = 0
@@ -988,25 +990,22 @@ local function processTelemetry(DATA_ID,VALUE,now)
     if VALUE ~= status.lastMsgValue then
       status.lastMsgValue = VALUE
       local c
-      local msgEnd = false
-      for i=3,0,-1
+      for i=0,3,1
       do
-        c = bit32.extract(VALUE,i*8,7)
-        if c ~= 0 then
+        c = bit32.extract(VALUE,i*8,8)
+        if status.msgStart then
+          status.msgSeverity = math.min(c, 7)
+          status.msgStart = false
+        elseif c ~= 0 then
           status.msgBuffer = status.msgBuffer .. string.char(c)
           updateHash(c)
         else
-          msgEnd = true;
+          utils.pushMessage(status.msgSeverity, status.msgBuffer)
+          status.msgBuffer = nil
+          status.msgBuffer = ""
+          status.msgStart = true
           break;
         end
-      end
-      if msgEnd then
-        local severity = (bit32.extract(VALUE,7,1) * 1) + (bit32.extract(VALUE,15,1) * 2) + (bit32.extract(VALUE,23,1) * 4)
-        utils.pushMessage( severity, status.msgBuffer)
-        playHash()
-        resetHash()
-        status.msgBuffer = nil
-        status.msgBuffer = ""
       end
     end
   elseif DATA_ID == 0x5007 then -- PARAMS
