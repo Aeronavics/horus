@@ -1084,12 +1084,12 @@ utils.ACRSSIMonitor = function()
   elseif status.acLinkStatus == 0 and utils.telemetryEnabled() then -- Check if AC link has been recovered
     utils.playSound("actlm_ok", true)
     status.acLinkStatus = 3 -- connection operational
-  elseif telemetry.drone_rssi < 80 and telemetry.drone_rssi > 0 then -- AC signal critical threshold
+  elseif telemetry.drone_rssi < 40 and telemetry.drone_rssi > 0 then -- AC signal critical threshold
     if status.acLinkStatus ~= 1 then
       utils.playSound("actlm_ct", true)
       status.acLinkStatus = 1 -- connection critical
     end
-  elseif telemetry.drone_rssi < 90 and telemetry.drone_rssi > 0 then -- AC signal low threshold
+  elseif telemetry.drone_rssi < 60 and telemetry.drone_rssi > 0 then -- AC signal low threshold
     if status.acLinkStatus ~= 2 then
       utils.playSound("actlm_lw", true)
       status.acLinkStatus = 2 -- connection low
