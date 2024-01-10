@@ -196,6 +196,8 @@ local function draw(myWidget,drawLib,conf,telemetry,status,battery,alarms,frame,
       utils.drawBlinkBitmap("minmax",0,0)
     end
   end
+
+  utils.ACRSSIMonitor()
 end
 
 return {draw=draw}

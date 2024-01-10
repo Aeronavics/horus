@@ -298,6 +298,7 @@ status.messageOffset = 0
 status.messageAutoScroll = true
 -- LINK STATUS
 status.noTelemetryData = 1
+status.acLinkStatus = -1 -- -1: Unassigned, 0: link down, 1: signal critical, 2: signal low, 3: link operation (starts at 0 so it doesn't say it has recovered when first connects)
 status.hideNoTelemetry = false
 status.showDualBattery = false
 status.showMinMaxValues = false
@@ -753,7 +754,7 @@ utils.pushMessage = function(severity, msg)
   end
 
   if (string.find(msg, "MotorEStop HIGH")) then
-    utils.playSound("nastia")
+    utils.playSound("nastia", true)
   end
 
 end
@@ -964,6 +965,7 @@ local function processTelemetry(DATA_ID,VALUE,now)
     if (temp_sid ~= telemetry.sid) then
       telemetry.sid = temp_sid
       telemetry.hybridconfig = false --reset hybrid config to check if new aircraft in also a hybrid or batt powered
+      status.acLinkStatus = -1 -- reset the link status so it can start fresh for new aircraft
     end
   elseif DATA_ID == 0x5002 then -- GPS STATUS
     telemetry.numSats = bit32.extract(VALUE,0,6)
@@ -1073,6 +1075,30 @@ utils.telemetryEnabled = function()
   end
   return status.noTelemetryData == 0
 end
+
+utils.ACRSSIMonitor = function()
+  if (getRSSI() ~= 0 and getTime() - telemetry.lastStatusTime > 500) and status.acLinkStatus > 0 then --Check to see if no telemtry has been received but hand controller is still connected to GCS
+    utils.playSound("actlm_ko", true)
+    status.acLinkStatus = 0 -- connection lost
+    telemetry.drone_rssi = 0
+  elseif status.acLinkStatus == 0 and utils.telemetryEnabled() then -- Check if AC link has been recovered
+    utils.playSound("actlm_ok", true)
+    status.acLinkStatus = 3 -- connection operational
+  elseif telemetry.drone_rssi < 80 and telemetry.drone_rssi > 0 then -- AC signal critical threshold
+    if status.acLinkStatus ~= 1 then
+      utils.playSound("actlm_ct", true)
+      status.acLinkStatus = 1 -- connection critical
+    end
+  elseif telemetry.drone_rssi < 90 and telemetry.drone_rssi > 0 then -- AC signal low threshold
+    if status.acLinkStatus ~= 2 then
+      utils.playSound("actlm_lw", true)
+      status.acLinkStatus = 2 -- connection low
+    end
+  elseif status.acLinkStatus < 0 and telemetry.drone_rssi > 0 then -- AC link has been aquired
+    status.acLinkStatus = 3 -- connection operational
+  end
+end
+
 
 utils.getMaxValue = function(value,idx)
   minmaxValues[idx] = math.max(value,minmaxValues[idx])
