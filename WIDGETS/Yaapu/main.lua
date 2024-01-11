@@ -1045,7 +1045,7 @@ local function processTelemetry(DATA_ID,VALUE,now)
     telemetry.apparentWindAngle = bit32.extract(VALUE, 16, 6) * (bit32.extract(VALUE,15,1) == 1 and -1 or 1) * 3 -- degrees
   elseif DATA_ID == 0x500D then -- RADIO STATUS
     telemetry.drone_rssi = bit32.extract(VALUE, 0, 8) -- Radio RSSI between 0 - 254
-    telemetry.drone_radio_noise = bit32.extract(VALUE, 8, 8) -- Radio RSSI between 0 - 254
+    telemetry.drone_radio_noise = bit32.extract(VALUE, 8, 8) -- Radio RSSI noise between 0 - 254
   --[[
   elseif DATA_ID == 0x50F1 then -- RC CHANNELS
     -- channels 1 - 32
@@ -1084,7 +1084,7 @@ utils.ACRSSIMonitor = function()
   elseif status.acLinkStatus == 0 and utils.telemetryEnabled() then -- Check if AC link has been recovered
     utils.playSound("actlm_ok", true)
     status.acLinkStatus = 3 -- connection operational
-  elseif telemetry.drone_rssi < 40 and telemetry.drone_rssi > 0 then -- AC signal critical threshold
+  elseif telemetry.drone_rssi < 30 and telemetry.drone_rssi > 0 then -- AC signal critical threshold
     if status.acLinkStatus ~= 1 then
       utils.playSound("actlm_ct", true)
       status.acLinkStatus = 1 -- connection critical
