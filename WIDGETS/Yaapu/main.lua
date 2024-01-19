@@ -752,11 +752,14 @@ utils.pushMessage = function(severity, msg)
   if status.messageAutoScroll == true then
     status.messageOffset = math.max(0, status.messageCount - 20)
   end
+<<<<<<< HEAD
 
   if (string.find(msg, "MotorEStop HIGH")) then
     utils.playSound("nastia", true)
   end
 
+=======
+>>>>>>> parent of 06ac1c3 (tomfoolery)
 end
 
 
