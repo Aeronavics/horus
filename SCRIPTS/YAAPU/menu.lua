@@ -73,7 +73,7 @@ local menuItems = {
   {"enable battery % by voltage:", "BPBV", 1, { "no", "yes" }, { false, true } },
   {"default voltage source:", "VS", 1, { "auto", "FLVSS", "fc" }, { nil, "vs", "fc" } },
   {"disable all sounds:", "S1", 1, { "no", "yes" }, { false, true } },
-  {"disable incoming msg beep:", "S2", 1, { "no", "only for INF severity", "always" }, { 1, 2, 3 } },
+  {"disable incoming msg beep:", "S2", 2, { "no", "only for INF severity", "always" }, { 1, 2, 3 } },
   {"enable haptic:", "VIBR", 1, { "no", "yes" }, { false, true } },
   {"timer alert every:", "T1", 0, 0,600,"min",PREC1,5 },
   {"min altitude alert:", "A1", 0, 0,500,"m",PREC1,5 },

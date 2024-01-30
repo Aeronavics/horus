@@ -471,7 +471,7 @@ local conf = {
   battCapOverride1 = 0,
   battCapOverride2 = 0,
   disableAllSounds = false,
-  disableMsgBeep = 1,
+  disableMsgBeep = 2,
   enableHaptic = false,
   timerAlert = 0,
   repeatAlertsPeriod = 10,
@@ -753,7 +753,7 @@ utils.pushMessage = function(severity, msg)
     playHaptic(15,0)
   end
   if conf.disableAllSounds == false then
-    if ( severity < 5 and conf.disableMsgBeep < 3) then
+    if ( severity == 1 and conf.disableMsgBeep < 3) then
       utils.playSound("../err",true)
     else
       if conf.disableMsgBeep < 2 then
