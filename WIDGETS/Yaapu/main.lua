@@ -307,6 +307,7 @@ status.lastStatusArmed = 0
 status.lastGpsStatus = 0
 status.lastFlightMode = 0
 status.lastSimpleMode = 0
+status.lastHapticTime = 0
 -- battery levels
 status.batLevel = 99
 status.battLevel1 = false
@@ -749,8 +750,9 @@ local function formatMessage(severity,msg)
 end
 
 utils.pushMessage = function(severity, msg)
-  if conf.enableHaptic then
+  if conf.enableHaptic and (getTime()/100 - status.lastHapticTime > 0.5) then
     playHaptic(15,0)
+    status.lastHapticTime = getTime()/100
   end
   if conf.disableAllSounds == false then
     if ( severity == 1 and conf.disableMsgBeep < 3) then
