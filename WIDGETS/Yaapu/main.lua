@@ -115,6 +115,35 @@ frameTypes[10]  = "r"
 -- boat
 frameTypes[11]  = "b"
 
+status_text_library_magic_code = 255
+
+statusMessageLibrary = {}
+
+statusMessageLibrary[0] = "Arm: LAND mode not armable"
+statusMessageLibrary[1] = "Battery Failsafe"
+statusMessageLibrary[2] = "EKF3 IMU0 MAG0 ground mag anomaly, yaw re-aligned"
+statusMessageLibrary[3] = "EKF3 IMU1 MAG0 ground mag anomaly, yaw re-aligned"
+statusMessageLibrary[4] = "EKF3 IMU2 MAG0 ground mag anomaly, yaw re-aligned"
+statusMessageLibrary[5] = "GPS Glitch or Compass error"
+statusMessageLibrary[6] = "Glitch cleared"
+statusMessageLibrary[7] = "PreArm: AHRS: waiting for home"
+statusMessageLibrary[8] = "PreArm: Battery failsafe"
+statusMessageLibrary[9] = "PreArm: Compass calibration running"
+statusMessageLibrary[10] = "PreArm: GPS 1: Bad fix"
+statusMessageLibrary[11] = "PreArm: GPS 2: Bad fix"
+statusMessageLibrary[12] = "PreArm: GPS glitching"
+statusMessageLibrary[13] = "PreArm: Gyros inconsistent"
+statusMessageLibrary[14] = "PreArm: Motor Emergency Stopped"
+statusMessageLibrary[15] = "PreArm: Need Alt Estimate"
+statusMessageLibrary[16] = "PreArm: Radio failsafe on"
+statusMessageLibrary[17] = "PreArm: Throttle below failsafe"
+statusMessageLibrary[18] = "PrecLand: Init Failed"
+statusMessageLibrary[19] = "PrecLand: Target Lost"
+statusMessageLibrary[20] = "RC7: MotorEStop HIGH"
+statusMessageLibrary[21] = "RC7: MotorEStop LOW"
+statusMessageLibrary[22] = "Radio Failsafe - Disarming"
+statusMessageLibrary[23] = "Radio Failsafe Cleared"
+
 
 -- GPS fix types
 utils.gpsStatuses = {}
@@ -991,6 +1020,17 @@ local function processTelemetry(DATA_ID,VALUE,now)
       do
         c = bit32.extract(VALUE,i*8,8)
         if status.msgStart then
+          if c == status_text_library_magic_code then --Message has been encoded from library
+            status.msgSeverity = bit32.extract(VALUE,8,8)
+            library_index = bit32.extract(VALUE,16,16)
+            if library_index < #statusMessageLibrary then --Check index is within length of the array before trying to retrieve the message
+              status.msgBuffer = statusMessageLibrary[library_index]
+              utils.pushMessage(status.msgSeverity, status.msgBuffer)
+            end
+            status.msgBuffer = nil
+            status.msgBuffer = ""
+            break;
+          end
           status.msgSeverity = math.min(c, 7)
           status.msgStart = false
         elseif c ~= 0 then
