@@ -117,7 +117,7 @@ frameTypes[11]  = "b"
 
 status_text_library_magic_code = 255
 
-statusMessageLibrary = {}
+statusMessageLibrary = {} --THE CONTENTS OF THIS LIBRARY MUST MATCH THAT ON THE GROUND STATION STM32 UNDER smart_port.cpp
 
 statusMessageLibrary[0] = "Arm: LAND mode not armable"
 statusMessageLibrary[1] = "Battery Failsafe"
