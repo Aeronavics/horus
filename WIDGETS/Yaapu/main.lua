@@ -143,6 +143,8 @@ statusMessageLibrary[20] = "RC7: MotorEStop HIGH"
 statusMessageLibrary[21] = "RC7: MotorEStop LOW"
 statusMessageLibrary[22] = "Radio Failsafe - Disarming"
 statusMessageLibrary[23] = "Radio Failsafe Cleared"
+statusMessageLibrary[24] = "Landing Initiated"
+statusMessageLibrary[25] = "Landing Cancelled"
 
 
 -- GPS fix types
@@ -1028,6 +1030,11 @@ local function processTelemetry(DATA_ID,VALUE,now)
             if library_index < #statusMessageLibrary then --Check index is within length of the array before trying to retrieve the message
               status.msgBuffer = statusMessageLibrary[library_index]
               utils.pushMessage(status.msgSeverity, status.msgBuffer)
+              if library_index == 24 then
+                utils.playSound("landing_started")
+              elseif library_index == 24 then
+                utils.playSound("landing_cancelled")
+              end
             end
             status.msgBuffer = nil
             status.msgBuffer = ""
