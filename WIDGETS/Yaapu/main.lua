@@ -117,6 +117,9 @@ frameTypes[11]  = "b"
 
 status_text_library_magic_code = 255
 
+LANDING_INIT_TEXT = "Landing Initiated"
+LANDING_CANCELLED_TEXT = "Landing Cancelled"
+
 statusMessageLibrary = {} --THE CONTENTS OF THIS LIBRARY MUST MATCH THAT ON THE GROUND STATION STM32 UNDER smart_port.cpp
 
 statusMessageLibrary[0] = "Arm: LAND mode not armable"
@@ -143,8 +146,8 @@ statusMessageLibrary[20] = "RC7: MotorEStop HIGH"
 statusMessageLibrary[21] = "RC7: MotorEStop LOW"
 statusMessageLibrary[22] = "Radio Failsafe - Disarming"
 statusMessageLibrary[23] = "Radio Failsafe Cleared"
-statusMessageLibrary[24] = "Landing Initiated"
-statusMessageLibrary[25] = "Landing Cancelled"
+statusMessageLibrary[24] = LANDING_INIT_TEXT
+statusMessageLibrary[25] = LANDING_CANCELLED_TEXT
 
 
 -- GPS fix types
@@ -757,7 +760,11 @@ utils.pushMessage = function(severity, msg)
     status.lastHapticTime = getTime()/100
   end
   if conf.disableAllSounds == false then
-    if ( severity == 1 and conf.disableMsgBeep < 3) then
+    if (msg == LANDING_INIT_TEXT) then
+      utils.playSound("landing_started", true)
+    elseif (msg == LANDING_CANCELLED_TEXT) then
+      utils.playSound("landing_cancelled", true)
+    elseif ( severity == 1 and conf.disableMsgBeep < 3) then
       utils.playSound("../err",true)
     else
       if conf.disableMsgBeep < 2 then
@@ -1030,11 +1037,6 @@ local function processTelemetry(DATA_ID,VALUE,now)
             if library_index < #statusMessageLibrary then --Check index is within length of the array before trying to retrieve the message
               status.msgBuffer = statusMessageLibrary[library_index]
               utils.pushMessage(status.msgSeverity, status.msgBuffer)
-              if library_index == 24 then
-                utils.playSound("landing_started")
-              elseif library_index == 25 then
-                utils.playSound("landing_cancelled")
-              end
             end
             status.msgBuffer = nil
             status.msgBuffer = ""
