@@ -222,7 +222,7 @@ telemetry.roll = 0
 telemetry.pitch = 0
 telemetry.range = 0
 -- PARAMS
-telemetry.frameType = -1
+telemetry.frameType = 2 -- defaults to quadcopter
 telemetry.batt1Capacity = 0
 telemetry.batt2Capacity = 0
 -- GPS
