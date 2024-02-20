@@ -1032,7 +1032,7 @@ local function processTelemetry(DATA_ID,VALUE,now)
               utils.pushMessage(status.msgSeverity, status.msgBuffer)
               if library_index == 24 then
                 utils.playSound("landing_started")
-              elseif library_index == 24 then
+              elseif library_index == 25 then
                 utils.playSound("landing_cancelled")
               end
             end

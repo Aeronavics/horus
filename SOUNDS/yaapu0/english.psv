@@ -87,5 +87,5 @@ SOUNDS/yaapu0/en|systemid|System I D flight mode
 SOUNDS/yaapu0/en|autorotate|autorotate flight mode
 SOUNDS/yaapu0/en|velocity|velocity flight mode
 SOUNDS/yaapu0/en|yaapu|Yaa-pu telemetry ready
-SOUNDS/yaapu0/en|landing_started|Landing Initialised
+SOUNDS/yaapu0/en|landing_started|Landing Initiated
 SOUNDS/yaapu0/en|landing_cancelled|Landing Cancelled
