@@ -147,39 +147,78 @@ local function drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
   --]]
 
   -- hashmarks
-  local startY = minY + 1
-  local endY = maxY - 10
-  local step = 18
-  -- hSpeed
-  local roundHSpeed = math.floor((telemetry.hSpeed*conf.horSpeedMultiplier*0.1/5)+0.5)*5;
-  local offset = math.floor((telemetry.hSpeed*conf.horSpeedMultiplier*0.1-roundHSpeed)*0.2*step);
-  local ii = 0;
-  local yy = 0
-  lcd.setColor(CUSTOM_COLOR,lcd.RGB(120,120,120))
-  for j=roundHSpeed+20,roundHSpeed-20,-5
-  do
-      yy = startY + (ii*step) + offset - 14
-      if yy >= startY and yy < endY then
-        lcd.drawLine(100, yy+9, 104, yy+9, SOLID, CUSTOM_COLOR)
-        lcd.drawNumber(107,  yy, j, SMLSIZE+CUSTOM_COLOR)
-      end
-      ii=ii+1;
-  end
-  -- altitude
-  local roundAlt = math.floor((telemetry.homeAlt*unitScale/5)+0.5)*5;
-  offset = math.floor((telemetry.homeAlt*unitScale-roundAlt)*0.2*step);
-  ii = 0;
-  yy = 0
-  for j=roundAlt+20,roundAlt-20,-5
-  do
-      yy = startY + (ii*step) + offset - 14
-      if yy >= startY and yy < endY then
-        lcd.drawLine(366, yy+8, 370 , yy+8, SOLID, CUSTOM_COLOR)
-        lcd.drawNumber(364,  yy, j, SMLSIZE+RIGHT+CUSTOM_COLOR)
-      end
-      ii=ii+1;
-  end
+  -- local startY = minY + 1
+  -- local endY = maxY - 10
+  -- local step = 18
+  -- -- hSpeed
+  -- local roundHSpeed = math.floor((telemetry.hSpeed*conf.horSpeedMultiplier*0.1/5)+0.5)*5;
+  -- local offset = math.floor((telemetry.hSpeed*conf.horSpeedMultiplier*0.1-roundHSpeed)*0.2*step);
+  -- local ii = 0;
+  -- local yy = 0
+  -- lcd.setColor(CUSTOM_COLOR,lcd.RGB(120,120,120))
+  -- for j=roundHSpeed+20,roundHSpeed-20,-5
+  -- do
+  --     yy = startY + (ii*step) + offset - 14
+  --     if yy >= startY and yy < endY then
+  --       lcd.drawLine(100, yy+9, 104, yy+9, SOLID, CUSTOM_COLOR)
+  --       lcd.drawNumber(107,  yy, j, SMLSIZE+CUSTOM_COLOR)
+  --     end
+  --     ii=ii+1;
+  -- end
+  -- -- altitude
+  -- local roundAlt = math.floor((telemetry.homeAlt*unitScale/5)+0.5)*5;
+  -- offset = math.floor((telemetry.homeAlt*unitScale-roundAlt)*0.2*step);
+  -- ii = 0;
+  -- yy = 0
+  -- for j=roundAlt+20,roundAlt-20,-5
+  -- do
+  --     yy = startY + (ii*step) + offset - 14
+  --     if yy >= startY and yy < endY then
+  --       lcd.drawLine(366, yy+8, 370 , yy+8, SOLID, CUSTOM_COLOR)
+  --       lcd.drawNumber(364,  yy, j, SMLSIZE+RIGHT+CUSTOM_COLOR)
+  --     end
+  --     ii=ii+1;
+  -- end
   lcd.setColor(CUSTOM_COLOR,0xFFFF)
+
+  local y = 18
+  local minY = y+1
+  local heading = telemetry.yaw
+  local width = 240
+  local xMin = 120
+  local xMax = 360
+  local midX = (xMax + xMin)/2
+  local bigFont = true
+  local tickNo = 4 --number of ticks on one side
+  local stepCount = (xMax - xMin -24)/(2*tickNo)
+  local closestHeading = math.floor(heading/22.5) * 22.5
+  local closestHeadingX = midX + (closestHeading - heading)/22.5 * stepCount
+  local tickIdx = (closestHeading/22.5 - tickNo) % 16
+  local tickX = closestHeadingX - tickNo*stepCount   
+  local yawRibbonPoints = {"N",nil,"NE",nil,"E",nil,"SE",nil,"S",nil,"SW",nil,"W",nil,"NW",nil}
+  for i = 1,10 do
+      if tickX >= xMin and tickX < xMax then
+          if yawRibbonPoints[tickIdx+1] == nil then
+              lcd.setColor(CUSTOM_COLOR, 0xFFFF)
+              lcd.drawLine(tickX, minY, tickX, y+5, SOLID, CUSTOM_COLOR)
+          else
+              lcd.setColor(CUSTOM_COLOR, 0xFFFF)
+              lcd.drawText(tickX, minY-3, yawRibbonPoints[tickIdx+1], CUSTOM_COLOR+SMLSIZE+CENTER)
+          end
+      end
+      tickIdx = (tickIdx + 1) % 16
+      tickX = tickX + stepCount
+  end
+  -- home icon
+  local homeOffset = 0
+  local angleHome = telemetry.homeAngle - telemetry.yaw
+  if angleHome < 0 then angleHome = angleHome + 360 end
+  if angleHome > 270 or angleHome < 90 then
+    homeOffset = ((angleHome + 90) % 180)/180  * width
+  elseif angleHome >= 90 and angleHome < 180 then
+    homeOffset = width
+  end
+  drawLib.drawHomeIcon(xMin + homeOffset -5,minY + (bigFont and 38 or 30),utils)
 
   -------------------------------------
   -- hud bitmap
@@ -290,13 +329,23 @@ local function drawHud(myWidget,drawLib,conf,telemetry,status,battery,utils)
   -- end
 
   -- compass ribbon
-  drawLib.drawCompassRibbon(18,myWidget,conf,telemetry,status,battery,utils,240,120,360,25,true)
+  -- drawLib.drawCompassRibbon(18,myWidget,conf,telemetry,status,battery,utils,240,120,360,25,true)
+  
+  -- text box
+  local w = 70 -- 3 digits width
+  -- lcd.setColor(CUSTOM_COLOR, 0x0000)
+  -- lcd.drawFilledRectangle(midX - (w/2), minY-2, w, 32, CUSTOM_COLOR+SOLID)
+  lcd.setColor(CUSTOM_COLOR, 0xFFFF)
+  local heading_str = string.format("%03d",heading)
+  lcd.drawText(midX-5, minY-2, heading_str, CUSTOM_COLOR+CENTER+DBLSIZE)
+  lcd.drawText(midX+w/2-2, minY-5, "o", CUSTOM_COLOR+RIGHT+SMLSIZE)
+
   -- pitch and roll
-  lcd.setColor(CUSTOM_COLOR,0xFE60)
-  local xoffset =  math.abs(telemetry.pitch) > 99 and 6 or 0
-  lcd.drawNumber(248+xoffset,90,telemetry.pitch,CUSTOM_COLOR+SMLSIZE+RIGHT)
-  lcd.drawNumber(214,76,telemetry.roll,CUSTOM_COLOR+SMLSIZE+RIGHT)
-  lcd.setColor(CUSTOM_COLOR,0xFFFF)
+  -- lcd.setColor(CUSTOM_COLOR,0xFE60)
+  -- local xoffset =  math.abs(telemetry.pitch) > 99 and 6 or 0
+  -- lcd.drawNumber(248+xoffset,90,telemetry.pitch,CUSTOM_COLOR+SMLSIZE+RIGHT)
+  -- lcd.drawNumber(214,76,telemetry.roll,CUSTOM_COLOR+SMLSIZE+RIGHT)
+  -- lcd.setColor(CUSTOM_COLOR,0xFFFF)
 end
 
 local function background(myWidget,conf,telemetry,status,utils)
